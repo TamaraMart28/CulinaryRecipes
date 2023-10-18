@@ -5,11 +5,11 @@ VisualStudioVersion = 17.0.32112.339
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DatabaseImplement", "DatabaseImplement\DatabaseImplement.csproj", "{19BC8022-C1E4-4C5A-BFE8-4FDF09E4E2AF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BusinessLogics", "BusinessLogics\BusinessLogics.csproj", "{C9AEE96E-8A94-4EF9-A4A1-F7C4BFD100B7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BusinessLogics", "BusinessLogics\BusinessLogics.csproj", "{C9AEE96E-8A94-4EF9-A4A1-F7C4BFD100B7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestApi", "RestApi\RestApi.csproj", "{BDFBA31F-8881-45FC-86E9-6E37D8832A41}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RestApi", "RestApi\RestApi.csproj", "{BDFBA31F-8881-45FC-86E9-6E37D8832A41}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CulinaryRecipesApp", "CulinaryRecipesApp\CulinaryRecipesApp.csproj", "{F9EBD6EF-DAB8-4C17-B191-9B1F0AB72574}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CulinaryRecipesApp", "CulinaryRecipesApp\CulinaryRecipesApp.csproj", "{F9EBD6EF-DAB8-4C17-B191-9B1F0AB72574}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
