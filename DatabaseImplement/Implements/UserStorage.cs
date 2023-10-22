@@ -140,7 +140,7 @@ namespace DatabaseImplement.Implements
                 Selections = el.Selections != null ? el.Selections.ToDictionary(rec => rec.Id, rec => (rec.Name)) : null,
                 CommentGrades = el.CommentGrades != null ? el.CommentGrades.ToDictionary(rec => rec.Id, rec => (rec.Comment + ", " + rec.Grade)) : null,
                 SubscriptionFollowers = el.SubscriptionFollowers != null ? el.SubscriptionFollowers.ToDictionary(rec => rec.Id, rec => (rec.UserFollower.Nickname)) : null,
-                SubscriptionFollowings = el.SubscriptionFollowings != null ? el.SubscriptionFollowings.ToDictionary(rec => rec.Id, rec => (rec.UserFollowing.Nickname)) : null,
+                SubscriptionFollowings = el.SubscriptionFollowings != null ? el.SubscriptionFollowings.ToDictionary(rec => rec.Id, rec => (rec.UserFollowing.Nickname)) : null
             };
         }
     }

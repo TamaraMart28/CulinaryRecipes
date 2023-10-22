@@ -1,9 +1,12 @@
+using BusinessLogics.ViewModels;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
+CulinaryRecipesApp.APIClient.Connect(app.Configuration);
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -25,3 +28,9 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
+
+public struct Session
+{
+    public static UserVM User { get; set; }
+    public static int i = 0;
+}

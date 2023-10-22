@@ -1,6 +1,82 @@
 ﻿@{
-    ViewData["Title"] = "Privacy Policy";
+    ViewData["Title"] = "Privacy";
 }
-<h1>@ViewData["Title"]</h1>
+@if (TempData["Message"] != null)
+{
+        <div style="position: absolute; z-index: 2; width: 80%; left: 50%; transform: translate(-50%, -50%);" id="myBlock" class="fade-out-transition alert alert-danger">
+        @TempData["Message"]
+        </div>
 
-<p>Use this page to detail your site's privacy policy.</p>
+        <style>
+          .fade-out-transition {
+            opacity: 1;
+            transition: opacity 1s;
+          }
+
+          .fade-out-transition.fade-out {
+            opacity: 0;
+          }
+        </style>
+
+        <script>
+          setTimeout(function() {
+            const myBlock = document.getElementById("myBlock");
+            myBlock.classList.add("fade-out");
+          }, 3000);
+
+          const myBlock = document.getElementById("myBlock");
+          myBlock.addEventListener("transitionend", function() {
+            myBlock.style.display = "none";
+          });
+        </script>
+}
+
+<div class="text-center">
+    <h3 class="display-4">Личный кабинет</h3>
+</div>
+<div>
+<br />
+        
+            <form method="post" enctype="multipart/form-data">
+                <br />
+                <div class="col-md-5">
+                    <img src="@(string.IsNullOrEmpty(@Session.User.AvatarPath) ? "~/Files/avatar.jpg" : @Session.User.AvatarPath)" width="240" height="240" />
+                </div>
+                <div class="row">
+                    <div class="col-8"><input type="file" name="uploadedFile" class="form-control"></div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-4">Никнейм:</div>
+                    <div class="col-8">
+                        <input type="text" name="nickname" value="@Session.User.Nickname" />
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-4">Логин:</div>
+                    <div class="col-8">
+                        <input type="text" name="login" value="@Session.User.Login" />
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-4">Пароль:</div>
+                    <div class="col-8">
+                        <input type="password" name="password" value="@Session.User.Password" />
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <a class="col-4" asp-area="" asp-controller="Home" asp-action="UsersRecipes">Мои рецепты</a>
+                    <a class="col-4" asp-area="" asp-controller="Home" asp-action="UsersSelections">Мои подборки</a>
+                </div>
+                <br />
+                <div class="row">
+                    <input type="submit" class="col-4 btn btn-dark" asp-route-fio="fio" asp-action="UpdateUser" value="Изменить" />
+                </div>
+            </form>                                
+</div>
+
+
+
