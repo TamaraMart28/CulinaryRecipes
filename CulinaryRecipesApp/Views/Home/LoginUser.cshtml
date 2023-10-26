@@ -1,6 +1,35 @@
 ﻿﻿﻿@{
     ViewData["Title"] = "LoginUser";
 }
+@if (TempData["Message"] != null)
+{
+        <div style="position: absolute; z-index: 2; width: 80%; left: 50%; transform: translate(-50%, -50%);" id="myBlock" class="fade-out-transition alert alert-danger">
+        @TempData["Message"]
+        </div>
+
+        <style>
+          .fade-out-transition {
+            opacity: 1;
+            transition: opacity 1s;
+          }
+
+          .fade-out-transition.fade-out {
+            opacity: 0;
+          }
+        </style>
+
+        <script>
+          setTimeout(function() {
+            const myBlock = document.getElementById("myBlock");
+            myBlock.classList.add("fade-out");
+          }, 3000);
+
+          const myBlock = document.getElementById("myBlock");
+          myBlock.addEventListener("transitionend", function() {
+            myBlock.style.display = "none";
+          });
+        </script>
+}
 
 <div class="text-center">
     <h2 class="display-4">Вход в аккаунт</h2>

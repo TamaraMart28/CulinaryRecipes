@@ -14,6 +14,10 @@ namespace BusinessLogics.BindingModels
 
         public string Description { get; set; }
 
+        public string ImageName { get; set; }
+
+        public string ImagePath { get; set; }
+
         public DateTime Timing { get; set; }
 
         public int PortionAmount { get; set; }

@@ -1,0 +1,281 @@
+﻿@model RecipeBindingModel
+
+@{
+    ViewData["Title"] = "Создать рецепт"; 
+}
+@*<style>
+    .form-group {
+        position: relative;
+    }
+
+    .searchInput {
+        width: 100%;
+    }
+
+    .wordList {
+        position: absolute;
+        z-index: 9999;
+        background: white;
+        max-height: 100px; /* Здесь установите высоту в пикселях, которую вы предпочитаете */
+        overflow-y: auto;
+        display: none;
+    }
+
+    .wordList .list-group-item {
+        cursor: pointer;
+        padding: 5px;
+    }
+
+    .wordList .list-group-item:hover {
+        background-color: #e0e0e0; /* Цвет подсветки при наведении */
+    }
+</style>*@
+
+<h2>Создать рецепт</h2>
+
+<form asp-action="CreateRecipe" method="post" enctype="multipart/form-data">
+    <div class="form-group">
+        <label asp-for="Name">Название рецепта</label>
+        <input asp-for="Name" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Category">Категория</label>
+        <select asp-for="Category" value="@ViewBag.Category">
+                @foreach (var item in ViewBag.Categories)
+                {
+                    if (item.ToString() == ViewBag.Category)
+                    {
+                        <option value="@item.ToString()" selected>@item.ToString()</option>
+                    }
+                    else
+                    {
+                        <option value="@item.ToString()">@item.ToString()</option>
+                    }
+                }
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Image">Фото блюда</label>
+        <input type="file" asp-for="Image" accept="image/*" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Timing">Время приготовления</label>
+        <input type="time" asp-for="Timing" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="PortionAmount">Кол-во порций</label>
+        <input type="number" asp-for="PortionAmount" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Description">Описание</label>
+        <textarea asp-for="Description" class="form-control" rows="4"></textarea>
+    </div>
+
+    <div class="form-group">
+        <label>Ингредиенты</label>
+        <button type="button" id="addIng" class="btn btn-primary">Добавить ингредиент</button>
+        <div id="ingrContainer">
+            @if (Model.RecipeIngredients.Count != 0)
+            {
+                @for (var i = 0; i < Model.RecipeIngredients.Count; i++)
+                {
+                    <div class="ingr">
+                        <input type="text" class="form-control" asp-for="RecipeIngredients[i].Name" placeholder="Название ингредиента" />
+                        @*<input type="text" class="form-control searchInput" asp-for="RecipeIngredients[i].Name" placeholder="Название ингредиента" onclick="showList(this, @i)">
+
+                        <ul class="list-group wordList-@i" style="display: none;">
+                            @foreach(var item in ViewBag.Ingredients)
+                            {
+                                <li class="list-group-item">@item</li>
+                            }
+                        </ul>*@
+
+                        <input type="text" class="form-control" asp-for="RecipeIngredients[i].Amount" placeholder="Количество" />
+                        <button type="button" class="btn btn-danger removeIng">Удалить</button>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label>Пошаговые шаги приготовления</label>
+        <button type="button" id="addStep" class="btn btn-primary">Добавить шаг</button>
+        <div id="stepsContainer">
+            @if (Model.RecipeSteps.Count != 0)
+            {
+                @for (var i = 0; i < Model.RecipeSteps.Count; i++)
+                {
+                    <div class="step">
+                        <input type="file" asp-for="RecipeSteps[i].Photo" accept="image/*" />
+                        <input type="text" class="form-control" asp-for="RecipeSteps[i].Description" placeholder="Описание шага" />
+                        <button type="button" class="btn btn-danger removeStep">Удалить</button>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Создать</button>
+</form>
+@section scripts {
+    <script>
+        var nextIngredientIndex = @Model.RecipeIngredients.Count;
+        var nextStepIndex = @Model.RecipeSteps.Count;
+
+        $('#addIng').click(function () {
+            var ingredient = $('.ingr:first').clone(true);
+            ingredient.find('input').val('');
+            ingredient.find('input').each(function () {
+                var name = $(this).attr('name').replace('[0]', '[' + nextIngredientIndex + ']');
+                $(this).attr('name', name);
+            });
+            $('#ingrContainer').append(ingredient);
+            nextIngredientIndex++;
+        });
+
+        $('#addStep').click(function () {
+            var step = $('.step:first').clone(true);
+            step.find('input[type=file]').val('');
+            step.find('input[type=text]').val('');
+            step.find('input').each(function () {
+                var name = $(this).attr('name').replace('[0]', '[' + nextStepIndex + ']');
+                $(this).attr('name', name);
+            });
+            $('#stepsContainer').append(step);
+            nextStepIndex++;
+        });
+
+        $('#ingrContainer').on('click', '.removeIng', function () {
+            $(this).closest('.ingr').remove();
+            reindexIngredients();
+        });
+
+        $('#stepsContainer').on('click', '.removeStep', function () {
+            $(this).closest('.step').remove();
+            reindexSteps();
+        });
+
+        function reindexIngredients() {
+            nextIngredientIndex = 0;
+            $('#ingrContainer .ingr').each(function () {
+                $(this).find('input').each(function () {
+                    var name = $(this).attr('name').replace(/\[\d+\]/g, '[' + nextIngredientIndex + ']');
+                    $(this).attr('name', name);
+                });
+                nextIngredientIndex++;
+            });
+        }
+
+        function reindexSteps() {
+            nextStepIndex = 0;
+            $('#stepsContainer .step').each(function () {
+                $(this).find('input').each(function () {
+                    var name = $(this).attr('name').replace(/\[\d+\]/g, '[' + nextStepIndex + ']');
+                    $(this).attr('name', name);
+                });
+                nextStepIndex++;
+            });
+        }
+
+    </script>
+     @*<script>
+        function showList(input, index) {
+            var searchText = input.value.toLowerCase();
+            var list = document.getElementById('wordList-' + index);
+            var listItems = list.getElementsByTagName('li');
+
+            var listVisible = false;
+
+            for (var i = 0; i < listItems.length; i++) {
+                var listItem = listItems[i];
+                var text = listItem.textContent.toLowerCase();
+
+                if (text.includes(searchText)) {
+                    listItem.style.display = "block";
+                    listVisible = true;
+                } else {
+                    listItem.style.display = "none";
+                }
+
+                listItem.addEventListener("click", function () {
+                    input.value = this.textContent;
+                    list.style.display = "none";
+                });
+            }
+
+            if (listVisible) {
+                list.style.display = "block";
+            } else {
+                list.style.display = "none";
+            }
+        }
+    </script>*@
+    
+    @*<script>
+        var input = document.getElementsByClassName("searchInput");
+        var list = document.getElementsByClassName("wordList");
+
+        input.addEventListener("input", function () {
+            var searchText = input.value.toLowerCase();
+            var listVisible = false;
+
+            for (var i = 0; i < list.children.length; i++) {
+                var listItem = list.children[i];
+                var text = listItem.textContent.toLowerCase();
+
+                if (text.includes(searchText)) {
+                    listItem.style.display = "block";
+                    listVisible = true;
+                } else {
+                    listItem.style.display = "none";
+                }
+
+                // Добавьте обработчик события click для каждого элемента списка
+                listItem.addEventListener("click", function () {
+                    input.value = this.textContent; // Записать выбранный элемент в поле ввода
+                    list.style.display = "none"; // Скрыть список после выбора
+                });
+            }
+
+            if (listVisible) {
+                list.style.display = "block";
+            } else {
+                list.style.display = "none";
+            }
+        });
+    </script>*@
+    @*<script>
+        var input = document.getElementById("searchInput");
+        var list = document.getElementById("wordList");
+
+        input.addEventListener("input", function () {
+            var searchText = input.value.toLowerCase();
+            var listVisible = false;
+
+            for (var i = 0; i < list.children.length; i++) {
+                var listItem = list.children[i];
+                var text = listItem.textContent.toLowerCase();
+
+                if (text.includes(searchText)) {
+                    listItem.style.display = "block";
+                    listVisible = true;
+                } else {
+                    listItem.style.display = "none";
+                }
+            }
+
+            if (listVisible) {
+                list.style.display = "block";
+            } else {
+                list.style.display = "none";
+            }
+        });
+    </script>*@
+}
+

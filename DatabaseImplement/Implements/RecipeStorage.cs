@@ -29,7 +29,7 @@ namespace DatabaseImplement.Implements
             }
             using var context = new CulinaryRecipesDatabase();
 
-            return context.Recipes.Where(rec => rec.CategoryId == model.CategoryId || rec.UserId == model.UserId)
+            return context.Recipes.Where(rec => rec.CategoryId == model.CategoryId || (rec.Name == model.Name && rec.UserId == model.UserId) || (model.Name == "" && rec.UserId == model.UserId))
             .ToList().Select(CreateModel)
            .ToList();
         }
@@ -42,7 +42,7 @@ namespace DatabaseImplement.Implements
             }
             using var context = new CulinaryRecipesDatabase();
 
-            var el = context.Recipes.FirstOrDefault(rec => rec.Id == model.Id || rec.Name == model.Name);
+            var el = context.Recipes.FirstOrDefault(rec => rec.Id == model.Id);
             return el != null ? CreateModel(el) : null;
         }
 
@@ -58,6 +58,8 @@ namespace DatabaseImplement.Implements
                 {
                     Name = model.Name,
                     Description = model.Description,
+                    ImageName = model.ImageName,
+                    ImagePath = model.ImagePath,
                     Timing = model.Timing,
                     PortionAmount = model.PortionAmount,
                     CategoryId = model.CategoryId,
@@ -120,6 +122,8 @@ namespace DatabaseImplement.Implements
         {
             el.Name = model.Name;
             el.Description = model.Description;
+            el.ImageName = model.ImageName;
+            el.ImagePath = model.ImagePath;
             el.Timing = model.Timing;
             el.PortionAmount = model.PortionAmount;
             el.CategoryId = model.CategoryId;
@@ -135,6 +139,8 @@ namespace DatabaseImplement.Implements
                 Id = el.Id,
                 Name = el.Name,
                 Description = el.Description,
+                ImageName = el.ImageName,
+                ImagePath = el.ImagePath,
                 Timing = el.Timing,
                 PortionAmount = el.PortionAmount,
                 CategoryId = el.CategoryId,

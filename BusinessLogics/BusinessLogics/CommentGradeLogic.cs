@@ -36,6 +36,8 @@ namespace BusinessLogics.BusinessLogics
         {
             var element = _cgStorage.GetElement(new CommentGradeBM
             {
+                Comment = model.Comment,
+                Grade = model.Grade,
                 UserId = model.UserId,
                 RecipeId = model.RecipeId
             });

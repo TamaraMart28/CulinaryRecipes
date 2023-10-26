@@ -59,7 +59,7 @@ namespace DatabaseImplement.Implements
             }
             using var context = new CulinaryRecipesDatabase();
 
-            var _el = context.StepCookings.FirstOrDefault(rec => rec.Id == model.Id || rec.RecipeId == model.RecipeId);
+            var _el = context.StepCookings.FirstOrDefault(rec => rec.Id == model.Id || (rec.RecipeId == model.RecipeId && rec.Description == model.Description));
             return _el != null ? new StepCookingVM
             {
                 Id = _el.Id,

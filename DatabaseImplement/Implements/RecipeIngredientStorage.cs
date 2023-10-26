@@ -48,23 +48,18 @@ namespace DatabaseImplement.Implements
 
         public RecipeIngredientVM GetElement(RecipeIngredientBM model)//to do
         {
-            //if (model == null)
-            //{
-            //    return null;
-            //}
-            //using var context = new LibraryDatabase();
+            if (model == null)
+            {
+                return null;
+            }
+            using var context = new CulinaryRecipesDatabase();
 
-            //var _bb = context.BookBranches.FirstOrDefault(rec => rec.Id == model.Id || rec.BookId == model.BookId);
-            //return _bb != null ? new BookBranchViewModel
-            //{
-            //    Id = _bb.Id,
-            //    BranchId = _bb.BranchId,
-            //    BookId = _bb.BookId,
-            //    Amount = _bb.Amount,
-            //    AmountInStock = _bb.AmountInStock
-            //} :
-            //null;
-            return null;
+            var _el = context.RecipeIngredients.FirstOrDefault(rec => rec.Id == model.Id);
+            return _el != null ? new RecipeIngredientVM
+            {
+                Id = (int)_el.Id
+            } :
+            null;
         }
 
         public void Insert(RecipeIngredientBM model)
@@ -92,18 +87,18 @@ namespace DatabaseImplement.Implements
 
         public void Delete(RecipeIngredientBM model)//to do
         {
-            //using var context = new LibraryDatabase();
+            using var context = new CulinaryRecipesDatabase();
 
-            //var element = context.Branches.FirstOrDefault(rec => rec.Id == model.Id);
-            //if (element != null)
-            //{
-            //    context.Branches.Remove(element);
-            //    context.SaveChanges();
-            //}
-            //else
-            //{
-            //    throw new Exception("Филиал не найден");
-            //}
+            var element = context.RecipeIngredients.FirstOrDefault(rec => rec.Id == model.Id);
+            if (element != null)
+            {
+                context.RecipeIngredients.Remove(element);
+                context.SaveChanges();
+            }
+            else
+            {
+                throw new Exception("Элемент не найден");
+            }
         }
 
         private RecipeIngredient CreateModel(RecipeIngredientBM model, RecipeIngredient _ri)// to do

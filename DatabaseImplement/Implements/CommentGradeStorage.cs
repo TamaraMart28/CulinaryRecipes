@@ -57,7 +57,8 @@ namespace DatabaseImplement.Implements
             }
             using var context = new CulinaryRecipesDatabase();
 
-            var _el = context.CommentGrades.FirstOrDefault(rec => rec.Id == model.Id || rec.RecipeId == model.RecipeId);
+            var _el = context.CommentGrades.FirstOrDefault(rec => rec.Id == model.Id || (rec.RecipeId == model.RecipeId
+            && rec.UserId == model.UserId && rec.Comment == model.Comment && rec.Grade == model.Grade));
             return _el != null ? new CommentGradeVM
             {
                 Id = _el.Id,
