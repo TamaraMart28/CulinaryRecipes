@@ -1,0 +1,118 @@
+﻿@model IndexViewModelForRecipes
+@{
+    ViewData["Title"] = "Рецепты";
+    DateTime selectedTime = (DateTime)ViewBag.Timing;
+}
+
+<div class="text-center">
+    <h2 style="margin-bottom: 20px;" class="display-4">Новинки</h2>
+</div>
+
+<div style="margin-bottom: 20px;" class="accordion" id="accordionExample" style="background-color: #e8d3b3">
+  <div class="accordion-item">
+    <h2 class="accordion-header" id="headingOne" style="background-color: #e8d3b3">
+      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+        Поиск
+      </button>
+    </h2>
+    <div style="background-color: #e8d3b3" id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+      <form method="get">
+        <div class="form-inline form-group" style="background-color: #e8d3b3">
+            <label style="margin-bottom: 20px;" class="control-label">Название: </label>
+            <input style="margin-bottom: 20px;" name="name" class="form-control" value="@ViewBag.Name"/>
+
+            <label class="control-label">Категория: </label>
+
+            <select id="category" name="category" value="@ViewBag.Category">
+                @foreach (var item in ViewBag.Categories)
+                {
+                    if (item.ToString() == ViewBag.Category)
+                    {
+                        <option value="@item.ToString()" selected>@item.ToString()</option>
+                    }
+                    else
+                    {
+                        <option value="@item.ToString()">@item.ToString()</option>
+                    }
+                }
+            </select>
+
+            <label style="margin-bottom: 20px;" class="control-label">Время приготовления не более: </label>
+            <input type="time" style="margin-bottom: 20px;" name="timing" class="form-control" value="@selectedTime.ToString("HH:mm")"/>
+ 
+            <input style="margin-bottom: 20px;" class="btn btn-dark" type="submit" value="Поиск" class="btn btn-default" />
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+@{
+    int itemsPerColumn = (int)Math.Ceiling(Model.Recipes.Count() / 2.0); // Количество элементов в каждом столбце
+}
+<div class="container" style="margin-bottom: 20px;">
+    <div class="row">
+        <div class="col-md-6">
+            @for (int i = 0; i < itemsPerColumn && i < Model.Recipes.Count(); i++)
+            {
+                var recipe = Model.Recipes.ElementAt(i);
+                <div class="card mb-3" style="max-width: 100%; background-color: #e8d3b3">
+                  <div class="row g-0">
+                    <div class="col-md-4">
+                      <img src="@recipe.ImagePath" class="img-fluid rounded-start" alt="...">
+                    </div>
+                    <div class="col-md-8">
+                      <div class="card-body">
+                        <h5 class="card-title">@recipe.Name</h5>
+                        <p class="card-text">Время приготовления: @recipe.Timing.ToString("t")</p>
+                        <p class="card-text"><small class="text-muted">Кол-во порций: @recipe.PortionAmount</small></p>
+                        <a class="btn btn-dark" asp-area="" asp-controller="Home" asp-action="Recipe" asp-route-recipeId="@recipe.Id">Подробнее</a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+            }
+        </div>
+        <div class="col-md-6">
+            @for (int i = itemsPerColumn; i < Model.Recipes.Count(); i++)
+            {
+                var recipe = Model.Recipes.ElementAt(i);
+                <div class="card mb-3" style="max-width: 100%; background-color: #e8d3b3">
+                  <div class="row g-0">
+                    <div class="col-md-4">
+                      <img src="@recipe.ImagePath" class="img-fluid rounded-start" alt="...">
+                    </div>
+                    <div class="col-md-8">
+                      <div class="card-body">
+                        <h5 class="card-title">@recipe.Name</h5>
+                        <p class="card-text">Время приготовления: @recipe.Timing.ToString("t")</p>
+                        <p class="card-text"><small class="text-muted">Кол-во порций: @recipe.PortionAmount</small></p>
+                        <a class="btn btn-dark" asp-area="" asp-controller="Home" asp-action="Recipe" asp-route-recipeId="@recipe.Id">Подробнее</a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+
+@if (Model.PageViewModel.HasPreviousPage)
+{
+    <a asp-action="Search" 
+       asp-route-page="@(Model.PageViewModel.PageNumber - 1)" asp-route-name="@ViewBag.Name" asp-route-category="@ViewBag.Category" asp-route-timing="@ViewBag.Timing"
+       class="btn btn-outline-dark">
+        <i class="glyphicon glyphicon-chevron-left"></i>
+        Назад
+    </a>
+}
+@if (Model.PageViewModel.HasNextPage)
+{
+    <a asp-action="Search" 
+       asp-route-page="@(Model.PageViewModel.PageNumber + 1)" asp-route-name="@ViewBag.Name" asp-route-category="@ViewBag.Category" asp-route-timing="@ViewBag.Timing"
+       class="btn btn-outline-dark">
+        Вперед
+        <i class="glyphicon glyphicon-chevron-right"></i>
+    </a>
+}

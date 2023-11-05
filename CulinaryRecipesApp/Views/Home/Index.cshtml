@@ -1,28 +1,32 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
 }
+@using BusinessLogics.ViewModels;
+@model List<RecipeVM>
+
 <div class="text-center">
     <h3 class="display-4">Свежие рецепты</h3>
 </div>
 <div id="myCarousel" class="carousel slide" data-ride="carousel">
     <!-- Indicators -->
     <ol class="carousel-indicators">
-        @for (var i = 0; i < 3@*Model.Images.Count*@; i++)
+        @for (var i = 0; i < 2@*Model.Images.Count*@; i++)
         {
             <li data-target="#myCarousel" data-slide-to="@i" class="@(i == 0 ? "active" : "")"></li>
         }
     </ol>
 
     <!-- Slides -->
-    <div class="carousel-inner">
-        @for (var i = 0; i < 3@*Model.Images.Count*@; i++)
+    <div class="carousel-inner" style="background-color: #7a431f">
+        @for (var i = 0; i < 2@*Model.Images.Count*@; i++)
         {
-            <div class="carousel-item @(i == 0 ? "active" : "")">
-                @*@Model.Images[i]*@
-                <img src="~/Files/1.png" alt="Slide @(i + 1)">
-                <div class="carousel-caption">
-                    @*@Model.Captions[i]*@ описание
-                </div>
+            <div class="carousel-item @(i == 0 ? "active" : "")" >
+                <a href="Home/Recipe?recipeId=@ViewBag.RecipeList[i].Id">
+                    <img src="@ViewBag.RecipeList[i].ImagePath" alt="Slide @(i + 1)">
+                    <div class="carousel-caption">
+                        @ViewBag.RecipeList[i].Name @ViewBag.RecipeList[i].Description
+                    </div>
+                </a>
             </div>
         }
     </div>

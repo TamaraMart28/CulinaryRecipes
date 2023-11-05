@@ -1,0 +1,95 @@
+﻿@*@using BusinessLogics.ViewModels
+@model List<RecipeVM>
+<ul>
+    @foreach (var recipe in Model)
+    {
+        <li>
+            <a asp-action="Recipe" asp-route-recipeId="@recipe.Id">
+                @recipe.Name
+            </a>
+        </li>
+    }
+</ul>*@
+
+@model IndexViewModelForRecipes
+@{
+    ViewData["Title"] = "Рецепты";
+}
+
+<div class="text-center">
+    <h2 style="margin-bottom: 20px;" class="display-4">Новинки</h2>
+</div>
+
+@{
+    int itemsPerColumn = (int)Math.Ceiling(Model.Recipes.Count() / 2.0); // Количество элементов в каждом столбце
+}
+<div class="container" style="margin-bottom: 20px;">
+    <div class="row">
+        <div class="col-md-6">
+            @for (int i = 0; i < itemsPerColumn && i < Model.Recipes.Count(); i++)
+            {
+                var recipe = Model.Recipes.ElementAt(i);
+                @*string[] tailM = @recipe.ImagePath.Split('.');*@
+                @*string imageName = @recipe.ImageName + "." + @tailM[1];*@
+                <div class="card mb-3" style="max-width: 100%; background-color: #e8d3b3">
+                  <div class="row g-0">
+                    <div class="col-md-4">
+                      <img src="@recipe.ImagePath" class="img-fluid rounded-start" alt="...">
+                    </div>
+                    <div class="col-md-8">
+                      <div class="card-body">
+                        <h5 class="card-title">@recipe.Name</h5>
+                        <p class="card-text">Время приготовления: @(((DateTime)recipe.Timing).ToShortTimeString)</p>
+                        <p class="card-text"><small class="text-muted">Кол-во порций: @recipe.PortionAmount</small></p>
+                        <a class="btn btn-dark" asp-area="" asp-controller="Home" asp-action="Recipe" asp-route-recipeId="@recipe.Id">Подробнее</a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+            }
+        </div>
+        <div class="col-md-6">
+            @for (int i = itemsPerColumn; i < Model.Recipes.Count(); i++)
+            {
+                var recipe = Model.Recipes.ElementAt(i);
+                @*string[] tailM = @recipe.ImagePath.Split('.');*@
+                @*string imageName = @recipe.ImageName + "." + @tailM[1];*@
+                <div class="card mb-3" style="max-width: 100%; background-color: #e8d3b3">
+                  <div class="row g-0">
+                    <div class="col-md-4">
+                      <img src="@recipe.ImagePath" class="img-fluid rounded-start" alt="...">
+                    </div>
+                    <div class="col-md-8">
+                      <div class="card-body">
+                        <h5 class="card-title">@recipe.Name</h5>
+                        <p class="card-text">Время приготовления: @(((DateTime)recipe.Timing).ToShortTimeString)</p>
+                        <p class="card-text"><small class="text-muted">Кол-во порций: @recipe.PortionAmount</small></p>
+                        <a class="btn btn-dark" asp-area="" asp-controller="Home" asp-action="Recipe" asp-route-recipeId="@recipe.Id">Подробнее</a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+
+@if (Model.PageViewModel.HasPreviousPage)
+{
+    <a asp-action="Category" asp-route-categoryId="@ViewBag.CategoryId"
+       asp-route-page="@(Model.PageViewModel.PageNumber - 1)" 
+       class="btn btn-outline-dark">
+        <i class="glyphicon glyphicon-chevron-left"></i>
+        Назад
+    </a>
+}
+@if (Model.PageViewModel.HasNextPage)
+{
+    <a asp-action="Category" asp-route-categoryId="@ViewBag.CategoryId"
+       asp-route-page="@(Model.PageViewModel.PageNumber + 1)" 
+       class="btn btn-outline-dark">
+        Вперед
+        <i class="glyphicon glyphicon-chevron-right"></i>
+    </a>
+}

@@ -22,9 +22,21 @@ namespace CulinaryRecipesApp.Controllers
             _environment = environment;
         }
 
+        public IActionResult GetImage(string imageName)
+        {
+            //var imageFilePath = Path.Combine("C:\\Users\\Tamara\\Desktop", imageName);
+            var imageFilePath = Path.Combine("F:\\!Учеба\\4 КУРС\\КПО\\Курсовая\\CulinaryRecipes\\CulinaryRecipes\\CulinaryRecipesApp\\wwwroot\\Files", imageName);
+            var imageFileStream = System.IO.File.OpenRead(imageFilePath);
+            return File(imageFileStream, "image");
+        }
+
         //Главная страница
         public IActionResult Index()
         {
+            var RecipeList = APIClient.GetRequest<List<RecipeVM>>($"api/main/GetRecipeList");
+            RecipeList.Reverse();
+            RecipeList = RecipeList.GetRange(0, 2);
+            ViewBag.RecipeList = RecipeList;
             return View();
         }
 
@@ -341,6 +353,7 @@ namespace CulinaryRecipesApp.Controllers
             return Redirect("UsersRecipes");
         }
 
+        //Страница рецепта
         [HttpGet]
         public IActionResult Recipe(int recipeId)
         {
@@ -405,10 +418,89 @@ namespace CulinaryRecipesApp.Controllers
             return Redirect("Recipe?recipeId=" + recipeId);
         }
 
+        //Страница категорий
+        public IActionResult Categories()
+        {
+            var CategoryList = APIClient.GetRequest<List<CategoryVM>>($"api/main/GetCategoryList");
+            return View(CategoryList);
+        }
+
+        //Страница категории
+        [HttpGet]
+        public async Task<IActionResult> Category(int categoryId, int page = 1)
+        {
+            var RecipeList = APIClient.GetRequest<List<RecipeVM>>($"api/main/GetRecipeByCategoryList?categoryId={categoryId}");
+            ViewBag.CategoryId = categoryId;
+
+            int pageSize = 2;
+            var count = RecipeList.Count();
+            var items = RecipeList.Skip((page - 1) * pageSize).Take(pageSize);
+
+            PageViewModel pageViewModel = new PageViewModel(count, page, pageSize);
+            IndexViewModelForRecipes viewModel = new IndexViewModelForRecipes
+            {
+                PageViewModel = pageViewModel,
+                Recipes = items
+            };
+
+            return View(viewModel);
+        }
+
+        //Страница поиска
+        [HttpGet]
+        public async Task<IActionResult> Search(DateTime timing, int page = 1, string? name = "", string? category = "")
+        {
+            int pageSize = 2;   // количество элементов на странице
+
+            var recipes = APIClient.GetRequest<List<RecipeVM>>($"api/main/GetRecipeList");
+
+            IEnumerable<RecipeVM> selectedRecipes = recipes;
+            if (!string.IsNullOrWhiteSpace(name))
+            {
+                selectedRecipes = selectedRecipes.Where(p => p.Name.ToLower().Contains(name.ToLower()));
+            }
+            if (category == "Все") category = "";
+            
+            if (!string.IsNullOrWhiteSpace(category))
+            {
+                var categoryObj = APIClient.GetRequest<CategoryVM>($"api/main/GetCategory?description={category}");
+                selectedRecipes = selectedRecipes.Where(p => p.CategoryId.Equals(categoryObj.Id));
+            }
+            if (category == "") category = "Все";
+            var CategoriesVM = APIClient.GetRequest<List<CategoryVM>>($"api/main/getcategorylist");
+            var Categories = new List<string>();
+            Categories.Add("Все");
+            foreach (var item in CategoriesVM)
+            {
+                Categories.Add(item.Description);
+            }
+            ViewBag.Categories = Categories;
+
+            var date = new DateTime();
+            if (!(timing.TimeOfDay == date.TimeOfDay))
+            {
+                selectedRecipes = selectedRecipes.Where(p => timing.TimeOfDay <= p.Timing.TimeOfDay);
+            }
+
+            selectedRecipes = selectedRecipes.Reverse();
+
+            var count = selectedRecipes.Count();
+            var items = selectedRecipes.Skip((page - 1) * pageSize).Take(pageSize);
+
+            PageViewModel pageViewModel = new PageViewModel(count, page, pageSize);
+            IndexViewModelForRecipes viewModel = new IndexViewModelForRecipes
+            {
+                PageViewModel = pageViewModel,
+                Recipes = items
+            };
+            ViewBag.Name = name;
+            ViewBag.Category = category;
+            ViewBag.Timing = timing;
+            return View(viewModel);
+        }
 
 
-
-            [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
