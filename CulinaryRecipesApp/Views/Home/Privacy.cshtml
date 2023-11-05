@@ -68,8 +68,8 @@
                 </div>
                 <br />
                 <div class="row">
-                    <a class="col-4" asp-area="" asp-controller="Home" asp-action="UsersRecipes">Мои рецепты</a>
-                    <a class="col-4" asp-area="" asp-controller="Home" asp-action="UsersSelections">Мои подборки</a>
+                    <a class="col-4" asp-area="" asp-controller="Home" asp-action="UsersRecipes" asp-route-userId="@Session.User.Id">Мои рецепты</a>
+                    <a class="col-4" asp-area="" asp-controller="Home" asp-action="UsersSelections" asp-route-userId="@Session.User.Id">Мои подборки</a>
                 </div>
                 <br />
                 <div class="row">

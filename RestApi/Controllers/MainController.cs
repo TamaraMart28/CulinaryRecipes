@@ -81,7 +81,7 @@ namespace RestApi.Controllers
 
         //Список личных рецептов
         [HttpGet]
-        public List<RecipeVM> GetUsersRecipeList(int userId) => _recipeLogic.Read(new RecipeBM { Id = userId });
+        public List<RecipeVM> GetUsersRecipeList(int userId) => _recipeLogic.Read(new RecipeBM { Name = "", UserId = userId });
 
         //Список рецептов по категории
         [HttpGet]

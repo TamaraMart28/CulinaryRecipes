@@ -224,9 +224,21 @@ namespace CulinaryRecipesApp.Controllers
 
         //Рецепты пользователя
         [HttpGet]
-        public IActionResult UsersRecipes()
+        public IActionResult UsersRecipes(int userId, int page = 1)
         {
-            return View();
+            var RecipeList = APIClient.GetRequest<List<RecipeVM>>($"api/main/GetUsersRecipeList?userId={userId}");
+            int pageSize = 2;
+            var count = RecipeList.Count();
+            var items = RecipeList.Skip((page - 1) * pageSize).Take(pageSize);
+
+            PageViewModel pageViewModel = new PageViewModel(count, page, pageSize);
+            IndexViewModelForRecipes viewModel = new IndexViewModelForRecipes
+            {
+                PageViewModel = pageViewModel,
+                Recipes = items
+            };
+
+            return View(viewModel);
         }
 
 
@@ -498,6 +510,11 @@ namespace CulinaryRecipesApp.Controllers
             ViewBag.Timing = timing;
             return View(viewModel);
         }
+
+        
+
+
+
 
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
