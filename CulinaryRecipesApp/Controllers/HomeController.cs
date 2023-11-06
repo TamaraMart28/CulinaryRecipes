@@ -430,6 +430,19 @@ namespace CulinaryRecipesApp.Controllers
             return Redirect("Recipe?recipeId=" + recipeId);
         }
 
+        //Удаление рецепта
+        [HttpGet]
+        public void DeleteRecipe(int recipeId)
+        {
+            var recipe = APIClient.GetRequest<RecipeVM>($"api/main/getrecipe?recipeId={recipeId}");
+            recipe.StepCookings = new Dictionary<int, string>();
+            recipe.CommentGrades = new Dictionary<int, string>();
+            recipe.RecipeIngredients = new Dictionary<int, string>();
+            APIClient.PostRequest("api/main/DeleteRecipe", recipe);
+            Response.Redirect("UsersRecipes?userId=" + Session.User.Id);
+            return;
+        }
+
         //Страница категорий
         public IActionResult Categories()
         {
