@@ -35,7 +35,7 @@ namespace DatabaseImplement.Implements
             }
             using var context = new CulinaryRecipesDatabase();
 
-            return context.Selections.Where(rec => rec.UserId == model.UserId)
+            return context.Selections.Where(rec => (rec.Name == model.Name && rec.UserId == model.UserId) || (model.Name == "" && rec.UserId == model.UserId))
             .Select(rec => new SelectionVM
             {
                 Id = rec.Id,
@@ -54,7 +54,7 @@ namespace DatabaseImplement.Implements
             }
             using var context = new CulinaryRecipesDatabase();
 
-            var _el = context.Selections.FirstOrDefault(rec => rec.Id == model.Id || rec.UserId == model.UserId);
+            var _el = context.Selections.FirstOrDefault(rec => rec.Id == model.Id);
             return _el != null ? new SelectionVM
             {
                 Id = _el.Id,

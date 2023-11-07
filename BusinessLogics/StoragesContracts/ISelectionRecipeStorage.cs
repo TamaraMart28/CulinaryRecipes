@@ -13,6 +13,7 @@ namespace BusinessLogics.StoragesContracts
         List<SelectionRecipeVM> GetFullList();
         List<SelectionRecipeVM> GetFilteredList(SelectionRecipeBM model);
         SelectionRecipeVM GetElement(SelectionRecipeBM model);
+        SelectionRecipeVM GetElementByIds(SelectionRecipeBM model);
         void Insert(SelectionRecipeBM model);
         void Update(SelectionRecipeBM model);
         void Delete(SelectionRecipeBM model);

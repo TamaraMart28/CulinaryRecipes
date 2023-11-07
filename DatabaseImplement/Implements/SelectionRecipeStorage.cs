@@ -44,25 +44,40 @@ namespace DatabaseImplement.Implements
             .ToList();
         }
 
-        public SelectionRecipeVM GetElement(SelectionRecipeBM model)//to do
+        public SelectionRecipeVM GetElement(SelectionRecipeBM model)
         {
-            //if (model == null)
-            //{
-            //    return null;
-            //}
-            //using var context = new LibraryDatabase();
+            if (model == null)
+            {
+                return null;
+            }
+            using var context = new CulinaryRecipesDatabase();
 
-            //var _bb = context.BookBranches.FirstOrDefault(rec => rec.Id == model.Id || rec.BookId == model.BookId);
-            //return _bb != null ? new BookBranchViewModel
-            //{
-            //    Id = _bb.Id,
-            //    BranchId = _bb.BranchId,
-            //    BookId = _bb.BookId,
-            //    Amount = _bb.Amount,
-            //    AmountInStock = _bb.AmountInStock
-            //} :
-            //null;
-            return null;
+            var _bb = context.SelectionRecipes.FirstOrDefault(rec => rec.Id == model.Id);
+            return _bb != null ? new SelectionRecipeVM
+            {
+                Id = (int)_bb.Id,
+                SelectionId = _bb.SelectionId,
+                RecipeId = _bb.RecipeId
+            } :
+            null;
+        }
+
+        public SelectionRecipeVM GetElementByIds(SelectionRecipeBM model)
+        {
+            if (model == null)
+            {
+                return null;
+            }
+            using var context = new CulinaryRecipesDatabase();
+
+            var _fb = context.SelectionRecipes.FirstOrDefault(rec => rec.RecipeId == model.RecipeId && rec.SelectionId == model.SelectionId);
+            return _fb != null ? new SelectionRecipeVM
+            {
+                Id = (int)_fb.Id,
+                RecipeId = _fb.RecipeId,
+                SelectionId = _fb.SelectionId
+            } :
+            null;
         }
 
         public void Insert(SelectionRecipeBM model)
@@ -90,18 +105,18 @@ namespace DatabaseImplement.Implements
 
         public void Delete(SelectionRecipeBM model)//to do
         {
-            //using var context = new LibraryDatabase();
+            using var context = new CulinaryRecipesDatabase();
 
-            //var element = context.Branches.FirstOrDefault(rec => rec.Id == model.Id);
-            //if (element != null)
-            //{
-            //    context.Branches.Remove(element);
-            //    context.SaveChanges();
-            //}
-            //else
-            //{
-            //    throw new Exception("Филиал не найден");
-            //}
+            var element = context.SelectionRecipes.FirstOrDefault(rec => rec.Id == model.Id);
+            if (element != null)
+            {
+                context.SelectionRecipes.Remove(element);
+                context.SaveChanges();
+            }
+            else
+            {
+                throw new Exception("Филиал не найден");
+            }
         }
 
         private SelectionRecipe CreateModel(SelectionRecipeBM model, SelectionRecipe _sr)// to do

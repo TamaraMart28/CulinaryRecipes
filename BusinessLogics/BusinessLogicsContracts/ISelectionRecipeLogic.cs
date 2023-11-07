@@ -11,6 +11,7 @@ namespace BusinessLogics.BusinessLogicsContracts
     public interface ISelectionRecipeLogic
     {
         List<SelectionRecipeVM> Read(SelectionRecipeBM model);
+        List<SelectionRecipeVM> ReadByIds(SelectionRecipeBM model);
         void CreateOrUpdate(SelectionRecipeBM model);
         void Delete(SelectionRecipeBM model);
     }

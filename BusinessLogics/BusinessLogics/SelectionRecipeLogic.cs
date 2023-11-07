@@ -32,6 +32,15 @@ namespace BusinessLogics.BusinessLogics
             return _srStorage.GetFilteredList(model);
         }
 
+        public List<SelectionRecipeVM> ReadByIds(SelectionRecipeBM model)
+        {
+            if (model == null)
+            {
+                return _srStorage.GetFullList();
+            }
+            return new List<SelectionRecipeVM> { _srStorage.GetElementByIds(model) };
+        }
+
         public void CreateOrUpdate(SelectionRecipeBM model)
         {
             var element = _srStorage.GetElement(new SelectionRecipeBM

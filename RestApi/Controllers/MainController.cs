@@ -17,10 +17,12 @@ namespace RestApi.Controllers
         private readonly IStepCookingLogic _scLogic;
         private readonly IIngredientLogic _ingrLogic;
         private readonly ICommentGradeLogic _cgLogic;
+        private readonly ISelectionLogic _selectionLogic;
+        private readonly ISelectionRecipeLogic _srLogic;
 
         public MainController(IUserLogic userLogic, IRecipeLogic recipeLogic, ICategoryLogic categoryLogic,
             IRecipeIngredientLogic riLogic, IStepCookingLogic scLogic, IIngredientLogic ingrLogic,
-            ICommentGradeLogic cgLogic)
+            ICommentGradeLogic cgLogic, ISelectionLogic selectionLogic, ISelectionRecipeLogic srLogic)
         {
             _userLogic = userLogic;
             _recipeLogic = recipeLogic;
@@ -29,6 +31,8 @@ namespace RestApi.Controllers
             _scLogic = scLogic;
             _ingrLogic = ingrLogic;
             _cgLogic = cgLogic;
+            _selectionLogic = selectionLogic;
+            _srLogic = srLogic;
         }
 
         //USER
@@ -208,5 +212,50 @@ namespace RestApi.Controllers
         [HttpGet]
         public List<CommentGradeVM> GetCommentGradeByRecipeList(int recipeId) => _cgLogic.Read(new CommentGradeBM { RecipeId = recipeId });
 
+
+        //SELECTION
+        //Список всех подборок
+        [HttpGet]
+        public List<SelectionVM> GetSelectionList() => _selectionLogic.Read(null)?.ToList();
+
+        //Список личных рецептов
+        [HttpGet]
+        public List<SelectionVM> GetUsersSelectionList(int userId) => _selectionLogic.Read(new SelectionBM { Name = "", UserId = userId });
+
+        //Подборка
+        [HttpGet]
+        public SelectionVM GetSelection(int selectionId) => _selectionLogic.Read(new SelectionBM { Id = selectionId })?[0];
+
+        //Подборка по названию и пользователю
+        [HttpGet]
+        public SelectionVM GetSelectionByName(string name, int userId) => _selectionLogic.Read(new SelectionBM { Name = name, UserId = userId })?[0];
+
+        //Создание рецепта
+        [HttpPost]
+        public void CreateOrUpdateSelection(SelectionBM model) => _selectionLogic.CreateOrUpdate(model);
+
+        //Удаление рецепта
+        [HttpPost]
+        public void DeleteSelection(SelectionBM model) => _selectionLogic.Delete(model);
+
+
+        //sELECTIONrECIPE
+        [HttpGet]
+        public List<SelectionRecipeVM> GetSelectionRecipesList() => _srLogic.Read(null)?.ToList();
+
+        [HttpGet]
+        public SelectionRecipeVM GetSelectionRecipe(int srId) => _srLogic.Read(new SelectionRecipeBM { Id = srId })?[0];
+
+        [HttpGet]
+        public SelectionRecipeVM GetSelectionRecipeByIds(int recipeId, int selectionId) => _srLogic.ReadByIds(new SelectionRecipeBM { RecipeId = recipeId, SelectionId = selectionId })?[0];
+
+        [HttpGet]
+        public List<SelectionRecipeVM> GetSelectionRecipeBySelection(int selectionId) => _srLogic.Read(new SelectionRecipeBM { SelectionId = selectionId });
+
+        [HttpPost]
+        public void CreateOrUpdateSelectionRecipe(SelectionRecipeBM model) => _srLogic.CreateOrUpdate(model);
+
+        [HttpPost]
+        public void DeleteSelectionRecipe(SelectionRecipeBM model) => _srLogic.Delete(model);
     }
 }

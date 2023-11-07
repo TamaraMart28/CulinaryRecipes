@@ -34,12 +34,12 @@ namespace BusinessLogics.BusinessLogics
 
         public void CreateOrUpdate(SelectionBM model)
         {
-            var element = _selStorage.GetElement(new SelectionBM
+            var element = _selStorage.GetFilteredList(new SelectionBM
             {
-                UserId = model.UserId,
-                Name = model.Name
+                Name = model.Name,
+                UserId = model.UserId                
             });
-            if (element != null && element.Id != model.Id)
+            if (element != null && element.Count > 0 && element[0] != null && element[0].Id != model.Id)
             {
                 throw new Exception("Уже есть такая запись");
             }

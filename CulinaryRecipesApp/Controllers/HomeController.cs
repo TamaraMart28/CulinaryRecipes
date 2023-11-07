@@ -30,6 +30,14 @@ namespace CulinaryRecipesApp.Controllers
             return File(imageFileStream, "image");
         }
 
+        //Выход из личного кабинета
+        public void LogoutUser()
+        {
+            Session.User = null;
+            Response.Redirect("Index");
+            return;
+        }
+
         //Главная страница
         public IActionResult Index()
         {
@@ -241,7 +249,6 @@ namespace CulinaryRecipesApp.Controllers
             return View(viewModel);
         }
 
-
         //Создание рецепта
         [HttpGet]
         public IActionResult CreateRecipe()
@@ -362,7 +369,7 @@ namespace CulinaryRecipesApp.Controllers
                 i++;
             }
 
-            return Redirect("UsersRecipes");
+            return Redirect("UsersRecipes?userId=" + Session.User.Id);
         }
 
         //Страница рецепта
@@ -411,8 +418,9 @@ namespace CulinaryRecipesApp.Controllers
             model.RecipeSteps = RecipeSteps;
             model.CommentGrades = CommentGrades;
 
+            ViewBag.UsersSelection = APIClient.GetRequest<List<SelectionVM>>($"api/main/GetUsersSelectionList?userId={Session.User.Id}"); 
 
-            
+
 
             return View(model);
         }
@@ -442,6 +450,120 @@ namespace CulinaryRecipesApp.Controllers
             Response.Redirect("UsersRecipes?userId=" + Session.User.Id);
             return;
         }
+
+        //Подборки пользователя
+        [HttpGet]
+        public IActionResult UsersSelections(int userId, int page = 1)
+        {
+            var SelectionList = APIClient.GetRequest<List<SelectionVM>>($"api/main/GetUsersSelectionList?userId={userId}");
+            int pageSize = 2;
+            var count = SelectionList.Count();
+            var items = SelectionList.Skip((page - 1) * pageSize).Take(pageSize);
+
+            PageViewModel pageViewModel = new PageViewModel(count, page, pageSize);
+            IndexViewModelForSelections viewModel = new IndexViewModelForSelections
+            {
+                PageViewModel = pageViewModel,
+                Selections = items
+            };
+
+            return View(viewModel);
+        }
+
+        //Создание подборки
+        [HttpPost]
+        public IActionResult CreateSelection(string name, bool isPrivate)
+        {
+            APIClient.PostRequest("api/main/createorupdateselection", new SelectionBM
+            {
+                Name = name,
+                IsPrivate = isPrivate,
+                UserId = Session.User.Id
+            });
+
+            return Redirect("UsersSelections?userId=" + Session.User.Id);
+            
+        }
+
+        //Страница подборки
+        [HttpGet]
+        public IActionResult Selection(int selectionId, int page = 1)
+        {
+            var selection = APIClient.GetRequest<SelectionVM>($"api/main/getselection?selectionId={selectionId}");
+            ViewBag.Selection = selection;
+
+            var SRList = APIClient.GetRequest<List<SelectionRecipeVM>>($"api/main/GetSelectionRecipeBySelection?selectionId={selectionId}");
+            var RecipeList = new List<RecipeVM>();
+            foreach(var item in SRList)
+            {
+                var recipe = APIClient.GetRequest<RecipeVM>($"api/main/getrecipe?recipeId={item.RecipeId}");
+                RecipeList.Add(recipe);
+            }
+
+            int pageSize = 2;
+            var count = RecipeList.Count();
+            var items = RecipeList.Skip((page - 1) * pageSize).Take(pageSize);
+
+            PageViewModel pageViewModel = new PageViewModel(count, page, pageSize);
+            IndexViewModelForRecipes viewModel = new IndexViewModelForRecipes
+            {
+                PageViewModel = pageViewModel,
+                Recipes = items
+            };
+
+            return View(viewModel);
+        }
+
+        [HttpGet]
+        public void AddRecipeToSelection(int recipeId, int selectionId)
+        {
+            var sr = APIClient.GetRequest<SelectionRecipeVM>($"api/main/GetSelectionRecipeByIds?recipeId={recipeId}&selectionId={selectionId}");
+            if (sr != null)
+            {
+                throw new Exception("Уже добавлено в подборку");
+            }
+            APIClient.PostRequest("api/main/CreateOrUpdateSelectionRecipe", new SelectionRecipeBM
+            {
+                RecipeId = recipeId,
+                SelectionId = selectionId
+            });
+
+            Response.Redirect("Recipe?recipeId=" + recipeId);
+            return;
+        }
+
+        //Удаление подборки
+        [HttpGet]
+        public void DeleteSelection(int selectionId)
+        {
+            var selection = APIClient.GetRequest<SelectionVM>($"api/main/getselection?selectionId={selectionId}");
+            APIClient.PostRequest("api/main/DeleteSelection", selection);
+            Response.Redirect("UsersSelections?userId=" + Session.User.Id);
+            return;
+        }
+
+        //Удаление рецепта из подборки
+        [HttpGet]
+        public void DeleteRecipeFromSelection(int recipeId, int selectionId)
+        {
+            var sr = APIClient.GetRequest<SelectionRecipeVM>($"api/main/GetSelectionRecipeByIds?recipeId={recipeId}&selectionId={selectionId}");
+            APIClient.PostRequest("api/main/DeleteSelectionRecipe", sr);
+            Response.Redirect("Selection?selectionId=" + selectionId);
+            return;
+        }
+
+        //Изменение приватности
+        [HttpPost]
+        public IActionResult SelectionChangeAccess(bool isPrivate, int selectionId)
+        {
+            var selection = APIClient.GetRequest<SelectionVM>($"api/main/getselection?selectionId={selectionId}");
+            selection.IsPrivate = isPrivate;
+            APIClient.PostRequest("api/main/createorupdateselection", selection);
+
+            return Redirect("Selection?selectionId=" + selectionId);
+
+        }
+
 
         //Страница категорий
         public IActionResult Categories()

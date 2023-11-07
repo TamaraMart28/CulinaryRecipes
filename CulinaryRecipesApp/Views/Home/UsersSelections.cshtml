@@ -1,0 +1,130 @@
+﻿@model IndexViewModelForSelections
+
+@*<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
+    Добавить подборку
+</button>
+
+<div class="modal" id="myModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Моя всплывающая форма</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Закрыть">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form asp-page-handler="CreateSelection" method="post" id="modalForm">
+                    <div class="form-group">
+                        <label asp-for="Name">Название подборки:</label>
+                        <input asp-for="Name" class="form-control" />
+                    </div><div class="form-group">
+                        <label asp-for="IsPrivate">Приватность:</label>
+                        <input type="checkbox" asp-for="IsPrivate" />
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Создать</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>*@
+
+<button id="openPopupButton">Добавить подборку</button>
+
+<!-- Всплывающая форма (изначально скрыта) -->
+<div id="popupForm" style="display: none;">
+    <label>Название:</label>
+    <input type="text" id="name">
+    <label>Приватность:</label>
+    <input type="checkbox" id="isPrivate">
+    <button id="submitButton">Отправить</button>
+</div>
+
+@{
+    int itemsPerColumn = (int)Math.Ceiling(Model.Selections.Count() / 2.0); // Количество элементов в каждом столбце
+}
+<div class="container" style="margin-bottom: 20px;">
+    <div class="row">
+        <div class="col-md-6">
+            @for (int i = 0; i < itemsPerColumn && i < Model.Selections.Count(); i++)
+            {
+                var selection = Model.Selections.ElementAt(i);
+                <div class="card mb-3" style="max-width: 100%; background-color: #e8d3b3">
+                  <div class="row g-0">
+                    <div class="card-body">
+                        <h5 class="card-title">@selection.Name</h5>
+                        <p class="card-text"><small class="text-muted">Доступ: @((selection.IsPrivate == true) ? "приватный" : "открытый")</small></p>
+                        <a class="btn btn-dark" asp-area="" asp-controller="Home" asp-action="Selection" asp-route-selectionId="@selection.Id">Подробнее</a>
+                        <a class="btn btn-secondary" asp-area="" asp-controller="Home" asp-action="DeleteSelection" asp-route-selectionId="@selection.Id">Удалить</a>
+                    </div>
+                  </div>
+                </div>
+            }
+        </div>
+        <div class="col-md-6">
+            @for (int i = itemsPerColumn; i < Model.Selections.Count(); i++)
+            {
+                var selection = Model.Selections.ElementAt(i);
+                <div class="card mb-3" style="max-width: 100%; background-color: #e8d3b3">
+                  <div class="row g-0">
+                    <div class="card-body">
+                        <h5 class="card-title">@selection.Name</h5>
+                        <p class="card-text"><small class="text-muted">Доступ: @((selection.IsPrivate == true) ? "приватный" : "открытый")</small></p>
+                        <a class="btn btn-dark" asp-area="" asp-controller="Home" asp-action="Selection" asp-route-selectionId="@selection.Id">Подробнее</a>
+                        <a class="btn btn-secondary" asp-area="" asp-controller="Home" asp-action="DeleteSelection" asp-route-selectionId="@selection.Id">Удалить</a>
+                    </div>
+                  </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+
+@if (Model.PageViewModel.HasPreviousPage)
+{
+    <a asp-action="UsersSelections" asp-route-userId="@Session.User.Id"
+       asp-route-page="@(Model.PageViewModel.PageNumber - 1)"
+       class="btn btn-outline-dark">
+        <i class="glyphicon glyphicon-chevron-left"></i>
+        Назад
+    </a>
+}
+@if (Model.PageViewModel.HasNextPage)
+{
+    <a asp-action="UsersSelections" asp-route-userId="@Session.User.Id"
+       asp-route-page="@(Model.PageViewModel.PageNumber + 1)" 
+       class="btn btn-outline-dark">
+        Вперед
+        <i class="glyphicon glyphicon-chevron-right"></i>
+    </a>
+}
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        // При нажатии на кнопку "Открыть форму"
+        $("#openPopupButton").click(function () {
+            $("#popupForm").show(); // Показать всплывающую форму
+        });
+
+        // При нажатии на кнопку "Отправить"
+        $("#submitButton").click(function () {
+            var value1 = $("#name").val();
+            var value2 = $("#isPrivate").is(":checked");
+
+            // Вы можете выполнить действие контроллера здесь с использованием AJAX
+            $.ajax({
+                type: "POST",
+                url: "CreateSelection",
+                data: { name: value1, isPrivate: value2 },
+                success: function (response) {
+                    // Закрыть всплывающую форму или выполнить другие действия
+                    $("#popupForm").hide();
+                    location.reload();
+                }
+            });
+        });
+    });
+</script>

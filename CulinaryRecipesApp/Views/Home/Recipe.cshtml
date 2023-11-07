@@ -46,7 +46,33 @@
 
 @if(Session.User != null)
 {
-    <a>Добавить в подборку</a>
+    <div style="margin-bottom: 20px;" class="accordion" id="accordionExample" style="background-color: #e8d3b3">
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="headingOne" style="background-color: #e8d3b3">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+            Добавить в подборку
+          </button>
+        </h2>
+        <div style="background-color: #e8d3b3" id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+          <ul>
+            @foreach (var selection in ViewBag.UsersSelection)
+            {
+                <li>
+                    <a asp-area="" asp-controller="Home" asp-action="AddRecipeToSelection" asp-route-recipeId="@Model.Id" asp-route-selectionId="@selection.Id">
+                        @selection.Name
+                    </a>
+                </li>
+            }
+        </ul>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+    
+    
+    
     <form asp-action="AddCommentGrade" method="post">
         <input type="hidden" name="recipeId" value="@Model.Id">
         <input type="hidden" name="userId" value="@Model.UserId">
