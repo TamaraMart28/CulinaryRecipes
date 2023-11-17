@@ -19,10 +19,12 @@ namespace RestApi.Controllers
         private readonly ICommentGradeLogic _cgLogic;
         private readonly ISelectionLogic _selectionLogic;
         private readonly ISelectionRecipeLogic _srLogic;
+        private readonly ISubscriptionLogic _subLogic;
 
         public MainController(IUserLogic userLogic, IRecipeLogic recipeLogic, ICategoryLogic categoryLogic,
             IRecipeIngredientLogic riLogic, IStepCookingLogic scLogic, IIngredientLogic ingrLogic,
-            ICommentGradeLogic cgLogic, ISelectionLogic selectionLogic, ISelectionRecipeLogic srLogic)
+            ICommentGradeLogic cgLogic, ISelectionLogic selectionLogic, ISelectionRecipeLogic srLogic,
+            ISubscriptionLogic subLogic)
         {
             _userLogic = userLogic;
             _recipeLogic = recipeLogic;
@@ -33,6 +35,7 @@ namespace RestApi.Controllers
             _cgLogic = cgLogic;
             _selectionLogic = selectionLogic;
             _srLogic = srLogic;
+            _subLogic = subLogic;
         }
 
         //USER
@@ -257,5 +260,28 @@ namespace RestApi.Controllers
 
         [HttpPost]
         public void DeleteSelectionRecipe(SelectionRecipeBM model) => _srLogic.Delete(model);
+
+
+        //SUBSCRIPTION
+        [HttpGet]
+        public List<SubscriptionVM> GetSubscriptionList() => _subLogic.Read(null)?.ToList();
+
+        [HttpGet]
+        public SubscriptionVM GetSubscription(int subId) => _subLogic.Read(new SubscriptionBM { Id = subId })?[0];
+
+        [HttpGet]
+        public SubscriptionVM GetSubscriptionByIds(int userIdFollower, int userIdFollowing) => _subLogic.ReadByIds(new SubscriptionBM { UserIdFollower = userIdFollower, UserIdFollowing = userIdFollowing })?[0];
+
+        [HttpGet]
+        public List<SubscriptionVM> GetSubscriptionByFollower(int userIdFollower) => _subLogic.Read(new SubscriptionBM { UserIdFollower = userIdFollower });
+
+        [HttpGet]
+        public List<SubscriptionVM> GetSubscriptionByFollowing(int userIdFollowing) => _subLogic.Read(new SubscriptionBM { UserIdFollowing = userIdFollowing });
+
+        [HttpPost]
+        public void CreateOrUpdateSubscription(SubscriptionBM model) => _subLogic.CreateOrUpdate(model);
+
+        [HttpPost]
+        public void DeleteSubscription(SubscriptionBM model) => _subLogic.Delete(model);
     }
 }

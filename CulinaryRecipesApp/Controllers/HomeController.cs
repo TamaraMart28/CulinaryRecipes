@@ -514,6 +514,7 @@ namespace CulinaryRecipesApp.Controllers
             return View(viewModel);
         }
 
+        //Добавление рецепта в подборку
         [HttpGet]
         public void AddRecipeToSelection(int recipeId, int selectionId)
         {
@@ -646,8 +647,125 @@ namespace CulinaryRecipesApp.Controllers
             return View(viewModel);
         }
 
-        
 
+        //Страница кулинара
+        public IActionResult Cook(int userId)
+        {
+            var user = APIClient.GetRequest<UserVM>($"api/main/GetUserById?userId={userId}");
+            if(Session.User != null)
+            {
+                var sub = APIClient.GetRequest<SubscriptionVM>($"api/main/GetSubscriptionByIds?userIdFollower={Session.User.Id}&userIdFollowing={userId}");
+                if (sub != null) { ViewBag.IsFolowing = true; }
+                else { ViewBag.IsFolowing = false; }
+            }
+            
+            return View(user);
+        }
+
+        //Рецепты кулинара
+        [HttpGet]
+        public IActionResult CooksRecipes(int userId, int page = 1)
+        {
+            var RecipeList = APIClient.GetRequest<List<RecipeVM>>($"api/main/GetUsersRecipeList?userId={userId}");
+            int pageSize = 2;
+            var count = RecipeList.Count();
+            var items = RecipeList.Skip((page - 1) * pageSize).Take(pageSize);
+
+            PageViewModel pageViewModel = new PageViewModel(count, page, pageSize);
+            IndexViewModelForRecipes viewModel = new IndexViewModelForRecipes
+            {
+                PageViewModel = pageViewModel,
+                Recipes = items
+            };
+            var user = APIClient.GetRequest<UserVM>($"api/main/GetUserById?userId={userId}");
+            ViewBag.User = user;
+            return View(viewModel);
+        }
+
+        //Подборки кулинара
+        [HttpGet]
+        public IActionResult CooksSelections(int userId, int page = 1)
+        {
+            var SelectionList = APIClient.GetRequest<List<SelectionVM>>($"api/main/GetUsersSelectionList?userId={userId}");
+            IEnumerable<SelectionVM> selectionsOpen = SelectionList;
+            selectionsOpen = selectionsOpen.Where(p => p.IsPrivate.Equals(false));
+
+            int pageSize = 2;
+            var count = selectionsOpen.Count();
+            var items = selectionsOpen.Skip((page - 1) * pageSize).Take(pageSize);
+
+            PageViewModel pageViewModel = new PageViewModel(count, page, pageSize);
+            IndexViewModelForSelections viewModel = new IndexViewModelForSelections
+            {
+                PageViewModel = pageViewModel,
+                Selections = items
+            };
+            var user = APIClient.GetRequest<UserVM>($"api/main/GetUserById?userId={userId}");
+            ViewBag.User = user;
+            return View(viewModel);
+        }
+
+        //Подписка на кулинара
+        [HttpGet]
+        public void FollowUser(int userIdFollower, int userIdFollowing)
+        {
+            var sub = APIClient.GetRequest<SubscriptionVM>($"api/main/GetSubscriptionByIds?userIdFollower={userIdFollower}&userIdFollowing={userIdFollowing}");
+            if (sub != null)
+            {
+                throw new Exception("Уже подписаны");
+            }
+            APIClient.PostRequest("api/main/CreateOrUpdateSubscription", new SubscriptionBM
+            {
+                UserIdFollower = userIdFollower,
+                UserIdFollowing = userIdFollowing
+            });
+
+            Response.Redirect("Cook?userId=" + userIdFollowing);
+            return;
+        }
+
+        //Отписка от кулинара
+        [HttpGet]
+        public void UnfollowUser(int userIdFollower, int userIdFollowing)
+        {
+            var sub = APIClient.GetRequest<SubscriptionVM>($"api/main/GetSubscriptionByIds?userIdFollower={userIdFollower}&userIdFollowing={userIdFollowing}");
+            APIClient.PostRequest("api/main/DeleteSubscription", sub);
+            Response.Redirect("Cook?userId=" + userIdFollowing);
+            return;
+        }
+
+        //Кулинары
+        //Рецепты кулинара
+        [HttpGet]
+        public IActionResult Cooks()
+        {
+            var AllUsers = APIClient.GetRequest<List<UserVM>>($"api/main/GetUserList");
+            ViewBag.AllUsers = AllUsers;
+            ViewBag.MyFollowers = AllUsers;
+            ViewBag.MySubscriptions = AllUsers;
+
+            if (Session.User != null) 
+            {
+                var FollowersList = APIClient.GetRequest<List<SubscriptionVM>>($"api/main/GetSubscriptionByFollowing?userIdFollowing={Session.User.Id}");
+                var MyFollowers = new List<UserVM>();
+                foreach (var item in FollowersList)
+                {
+                    var user = APIClient.GetRequest<UserVM>($"api/main/GetUserById?userId={item.UserIdFollower}");
+                    MyFollowers.Add(user);
+                }
+                ViewBag.MyFollowers = MyFollowers;
+
+                var SubscriptionsList = APIClient.GetRequest<List<SubscriptionVM>>($"api/main/GetSubscriptionByFollower?userIdFollower={Session.User.Id}");
+                var MySubscriptions = new List<UserVM>();
+                foreach (var item in SubscriptionsList)
+                {
+                    var user = APIClient.GetRequest<UserVM>($"api/main/GetUserById?userId={item.UserIdFollowing}");
+                    MySubscriptions.Add(user);
+                }
+                ViewBag.MySubscriptions = MySubscriptions;
+            }
+            return View();
+        }
 
 
 

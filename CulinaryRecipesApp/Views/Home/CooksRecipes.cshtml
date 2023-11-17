@@ -1,15 +1,5 @@
 ﻿@model IndexViewModelForRecipes
-@{
-    int selectionId = ViewBag.Selection.Id;
-}
-<h2>@ViewBag.Selection.Name</h2>
-@if(ViewBag.Selection.UserId == Session.User.Id)
-{
-    <label for="myCheckbox">Приватная подборка</label>
-    <input type="checkbox" id="myCheckbox" name="myCheckbox" @(ViewBag.Selection.IsPrivate ? "checked" : "") />
-}
 
-<h2>Рецепты</h2>
 @{
     int itemsPerColumn = (int)Math.Ceiling(Model.Recipes.Count() / 2.0); // Количество элементов в каждом столбце
 }
@@ -30,7 +20,6 @@
                         <p class="card-text">Время приготовления: @recipe.Timing.ToString("t")</p>
                         <p class="card-text"><small class="text-muted">Кол-во порций: @recipe.PortionAmount</small></p>
                         <a class="btn btn-dark" asp-area="" asp-controller="Home" asp-action="Recipe" asp-route-recipeId="@recipe.Id">Подробнее</a>
-                        <a class="btn btn-secondary" asp-area="" asp-controller="Home" asp-action="DeleteRecipeFromSelection" asp-route-recipeId="@recipe.Id" asp-route-selectionId="@ViewBag.Selection.Id">Удалить</a>
                       </div>
                     </div>
                   </div>
@@ -52,7 +41,6 @@
                         <p class="card-text">Время приготовления: @recipe.Timing.ToString("t")</p>
                         <p class="card-text"><small class="text-muted">Кол-во порций: @recipe.PortionAmount</small></p>
                         <a class="btn btn-dark" asp-area="" asp-controller="Home" asp-action="Recipe" asp-route-recipeId="@recipe.Id">Подробнее</a>
-                        <a class="btn btn-secondary" asp-area="" asp-controller="Home" asp-action="DeleteRecipeFromSelection" asp-route-recipeId="@recipe.Id" asp-route-selectionId="@ViewBag.Selection.Id">Удалить</a>
                       </div>
                     </div>
                   </div>
@@ -65,7 +53,7 @@
 
 @if (Model.PageViewModel.HasPreviousPage)
 {
-    <a asp-action="Selection" asp-route-selectionId="@ViewBag.Selection.Id"
+    <a asp-action="CooksRecipes" asp-route-userId="@ViewBag.User.Id"
        asp-route-page="@(Model.PageViewModel.PageNumber - 1)"
        class="btn btn-outline-dark">
         <i class="glyphicon glyphicon-chevron-left"></i>
@@ -74,32 +62,10 @@
 }
 @if (Model.PageViewModel.HasNextPage)
 {
-    <a asp-action="Selection" asp-route-selectionId="@ViewBag.Selection.Id"
+    <a asp-action="CooksRecipes" asp-route-userId="@ViewBag.User.Id"
        asp-route-page="@(Model.PageViewModel.PageNumber + 1)" 
        class="btn btn-outline-dark">
         Вперед
         <i class="glyphicon glyphicon-chevron-right"></i>
     </a>
 }
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-    $(document).ready(function () {
-        // При изменении состояния чекбокса
-        $("#myCheckbox").change(function () {
-            var isChecked = $(this).is(":checked"); // Проверяем, отмечен ли чекбокс
-
-            // Выполняем AJAX-запрос к серверу
-            $.ajax({
-                type: "POST", // Или "GET" в зависимости от вашего контроллера
-                url: "SelectionChangeAccess",
-                data: { isPrivate: isChecked, selectionId : @selectionId }, // Отправляем состояние чекбокса на сервер
-                success: function (response) {
-                    // Вы можете выполнить какие-либо дополнительные действия на клиентской стороне после успешного выполнения запроса
-                },
-                error: function (error) {
-                    // Обработка ошибки, если что-то пошло не так
-                }
-            });
-        });
-    });
-</script>

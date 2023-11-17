@@ -14,7 +14,7 @@ namespace DatabaseImplement.Models
 
         public int UserIdFollower { get; set; }
 
-        [NotMapped]
+        //[NotMapped]
         public int UserIdFollowing { get; set; }
 
         public virtual User UserFollower { get; set; }

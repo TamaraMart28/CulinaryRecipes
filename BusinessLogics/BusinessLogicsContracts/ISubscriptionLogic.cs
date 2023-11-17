@@ -11,6 +11,7 @@ namespace BusinessLogics.BusinessLogicsContracts
     public interface ISubscriptionLogic
     {
         List<SubscriptionVM> Read(SubscriptionBM model);
+        List<SubscriptionVM> ReadByIds(SubscriptionBM model);
         void CreateOrUpdate(SubscriptionBM model);
         void Delete(SubscriptionBM model);
     }

@@ -1,0 +1,62 @@
+﻿@{
+    ViewData["Title"] = "";
+}
+@if (TempData["Message"] != null)
+{
+        <div style="position: absolute; z-index: 2; width: 80%; left: 50%; transform: translate(-50%, -50%);" id="myBlock" class="fade-out-transition alert alert-danger">
+        @TempData["Message"]
+        </div>
+
+        <style>
+          .fade-out-transition {
+            opacity: 1;
+            transition: opacity 1s;
+          }
+
+          .fade-out-transition.fade-out {
+            opacity: 0;
+          }
+        </style>
+
+        <script>
+          setTimeout(function() {
+            const myBlock = document.getElementById("myBlock");
+            myBlock.classList.add("fade-out");
+          }, 3000);
+
+          const myBlock = document.getElementById("myBlock");
+          myBlock.addEventListener("transitionend", function() {
+            myBlock.style.display = "none";
+          });
+        </script>
+}
+@using BusinessLogics.ViewModels;
+@model UserVM
+
+<div class="col-md-5">
+     <img src="@(string.IsNullOrEmpty(@Model.AvatarPath) ? "~/Files/avatar.jpg" : @Model.AvatarPath)" width="240" height="240" />
+</div>
+<br />
+<div class="row">
+      <div class="col-4">@Model.Nickname</div>
+      <div class="col-4">@ViewBag.Followers</div>
+      @if(Session.User != null){
+        if (ViewBag.IsFolowing)
+        {
+            <a class="col-4 btn btn-danger" asp-route-userIdFollower="@Session.User.Id" asp-route-userIdFollowing="@Model.Id" asp-action="UnfollowUser">Отписаться</a>
+        }
+        else
+        {
+            <a class="col-4 btn btn-dark" asp-route-userIdFollower="@Session.User.Id" asp-route-userIdFollowing="@Model.Id" asp-action="FollowUser">Подписаться</a>
+        }
+    }
+</div>
+<br />
+<div class="row">
+    <a class="col-4" asp-area="" asp-controller="Home" asp-action="CooksRecipes" asp-route-userId="@Model.Id">Рецепты @Model.Nickname</a>
+    <a class="col-4" asp-area="" asp-controller="Home" asp-action="CooksSelections" asp-route-userId="@Model.Id">Подборки @Model.Nickname</a>
+</div> 
+
+
+
+

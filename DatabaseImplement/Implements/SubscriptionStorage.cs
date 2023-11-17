@@ -34,7 +34,7 @@ namespace DatabaseImplement.Implements
             }
             using var context = new CulinaryRecipesDatabase();
 
-            return context.Subscriptions.Where(rec => rec.UserIdFollower == model.UserIdFollower)
+            return context.Subscriptions.Where(rec => rec.UserIdFollower == model.UserIdFollower || rec.UserIdFollowing == model.UserIdFollowing)
             .Select(rec => new SubscriptionVM
             {
                 Id = rec.Id,
@@ -53,12 +53,30 @@ namespace DatabaseImplement.Implements
             }
             using var context = new CulinaryRecipesDatabase();
 
-            var _el = context.Subscriptions.FirstOrDefault(rec => rec.Id == model.Id || rec.UserIdFollower == model.UserIdFollower);
+            var _el = context.Subscriptions.FirstOrDefault(rec => rec.Id == model.Id);
             return _el != null ? new SubscriptionVM
             {
                 Id = _el.Id,
                 UserIdFollower = _el.UserIdFollower,
                 UserIdFollowing = _el.UserIdFollowing
+            } :
+            null;
+        }
+
+        public SubscriptionVM GetElementByIds(SubscriptionBM model)
+        {
+            if (model == null)
+            {
+                return null;
+            }
+            using var context = new CulinaryRecipesDatabase();
+
+            var _fb = context.Subscriptions.FirstOrDefault(rec => rec.UserIdFollower == model.UserIdFollower && rec.UserIdFollowing == model.UserIdFollowing);
+            return _fb != null ? new SubscriptionVM
+            {
+                Id = (int)_fb.Id,
+                UserIdFollower = _fb.UserIdFollower,
+                UserIdFollowing = _fb.UserIdFollowing
             } :
             null;
         }

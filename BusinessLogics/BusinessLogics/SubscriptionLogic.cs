@@ -32,6 +32,15 @@ namespace BusinessLogics.BusinessLogics
             return _subStorage.GetFilteredList(model);
         }
 
+        public List<SubscriptionVM> ReadByIds(SubscriptionBM model)
+        {
+            if (model == null)
+            {
+                return _subStorage.GetFullList();
+            }
+            return new List<SubscriptionVM> { _subStorage.GetElementByIds(model) };
+        }
+
         public void CreateOrUpdate(SubscriptionBM model)
         {
             var element = _subStorage.GetElement(new SubscriptionBM

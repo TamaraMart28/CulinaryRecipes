@@ -13,6 +13,7 @@ namespace BusinessLogics.StoragesContracts
         List<SubscriptionVM> GetFullList();
         List<SubscriptionVM> GetFilteredList(SubscriptionBM model);
         SubscriptionVM GetElement(SubscriptionBM model);
+        SubscriptionVM GetElementByIds(SubscriptionBM model);
         void Insert(SubscriptionBM model);
         void Update(SubscriptionBM model);
         void Delete(SubscriptionBM model);
