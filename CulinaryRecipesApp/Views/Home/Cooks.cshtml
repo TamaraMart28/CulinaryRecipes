@@ -1,60 +1,57 @@
-﻿
+﻿<div class="container">
+    <div class="text-center" >
+        <h2 style="margin-bottom: 20px;" class="display-4">Кулинары</h2>
+    </div>
 
-<div class="container">
-    <h1>Список кулинаров</h1>
-
-    <ul class="nav nav-tabs" id="userTabs" role="tablist">
+    <ul class="nav nav-tabs" id="userTabs" role="tablist" style="margin-bottom: 20px;">
         <li class="nav-item">
-            <a class="nav-link active" id="allUsers-tab" data-toggle="tab" href="#allUsers" role="tab" aria-controls="allUsers" aria-selected="true">Все кулинары</a>
+            <a class="nav-link active" id="allUsers-tab" data-toggle="tab" href="#allUsers" role="tab" aria-controls="allUsers" aria-selected="true" style="color: black;">Все кулинары</a>
         </li>
         @if(Session.User != null)
         {
             <li class="nav-item">
-                <a class="nav-link" id="myFollowers-tab" data-toggle="tab" href="#myFollowers" role="tab" aria-controls="myFollowers" aria-selected="false">Мои подписчики</a>
+                <a class="nav-link" id="myFollowers-tab" data-toggle="tab" href="#myFollowers" role="tab" aria-controls="myFollowers" aria-selected="false" style="color: black;">Мои подписчики</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" id="mySubscriptions-tab" data-toggle="tab" href="#mySubscriptions" role="tab" aria-controls="mySubscriptions" aria-selected="false">Мои подписки</a>
+                <a class="nav-link" id="mySubscriptions-tab" data-toggle="tab" href="#mySubscriptions" role="tab" aria-controls="mySubscriptions" aria-selected="false" style="color: black;">Мои подписки</a>
             </li>
         }
     </ul>
 
     <div class="tab-content" id="userTabsContent">
         <div class="tab-pane fade show active" id="allUsers" role="tabpanel" aria-labelledby="allUsers-tab">
-            <h2>Все кулинары</h2>
             <ul>
                 @foreach (var user in ViewBag.AllUsers)
                 {
-                    <li>
-                        <img src="@user.AvatarPath" width="50" height="50" />
-                        <a asp-area="" asp-controller="Home" asp-action="Cook" asp-route-userId="@user.Id">@user.Nickname</a>
+                    <li class="list-group-item" style="font-size: 20px; text-align: center">
+                        <img src="@(user.AvatarPath == "noimage" ? "/Files/avatar.jpg" : @user.AvatarPath)" width="50" height="50" />
+                        <a asp-area="" asp-controller="Home" asp-action="Cook" asp-route-userId="@user.Id" style="color: black;">@user.Nickname</a>
                     </li>
                 }
             </ul>
         </div>
 
         <div class="tab-pane fade" id="myFollowers" role="tabpanel" aria-labelledby="myFollowers-tab">
-            <h2>Мои подписчики</h2>
             <ul>
                 @foreach (var user in ViewBag.MyFollowers)
                 {
                     
-                    <li>
-                        <img src="@user.AvatarPath" width="50" height="50" />
-                        <a asp-area="" asp-controller="Home" asp-action="Cook" asp-route-userId="@user.Id">@user.Nickname</a>
+                    <li class="list-group-item" style="font-size: 20px; text-align: center">
+                        <img src="@(user.AvatarPath == "noimage" ? "/Files/avatar.jpg" : @user.AvatarPath)" width="50" height="50" />
+                        <a asp-area="" asp-controller="Home" asp-action="Cook" asp-route-userId="@user.Id" style="color: black;">@user.Nickname</a>
                     </li>
                 }
             </ul>
         </div>
 
         <div class="tab-pane fade" id="mySubscriptions" role="tabpanel" aria-labelledby="mySubscriptions-tab">
-            <h2>Мои подписки</h2>
             <ul>
                 @foreach (var user in ViewBag.MySubscriptions)
                 {
-                    <li>
+                    <li class="list-group-item" style="font-size: 20px; text-align: center">
                         
-                        <img src="@user.AvatarPath" width="50" height="50" />
-                        <a asp-area="" asp-controller="Home" asp-action="Cook" asp-route-userId="@user.Id">@user.Nickname</a>
+                        <img src="@(user.AvatarPath == "noimage" ? "/Files/avatar.jpg" : @user.AvatarPath)" width="50" height="50" />
+                        <a asp-area="" asp-controller="Home" asp-action="Cook" asp-route-userId="@user.Id" style="color: black;">@user.Nickname</a>
                     </li>
                 }
             </ul>

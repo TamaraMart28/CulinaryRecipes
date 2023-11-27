@@ -1,0 +1,183 @@
+﻿@model RecipeBindingModel
+
+@{
+    ViewData["Title"] = "Обновить рецепт"; 
+}
+@if (TempData["Message"] != null)
+{
+    <div style="position: absolute; z-index: 2; width: 80%; left: 50%; transform: translate(-50%, -50%);" id="myBlock" class="fade-out-transition alert alert-danger">
+      @TempData["Message"]
+    </div>
+
+    <style>
+      .fade-out-transition {
+        opacity: 1;
+        transition: opacity 1s;
+      }
+
+      .fade-out-transition.fade-out {
+        opacity: 0;
+      }
+    </style>
+
+    <script>
+      setTimeout(function() {
+        const myBlock = document.getElementById("myBlock");
+        myBlock.classList.add("fade-out");
+      }, 3000);
+
+      const myBlock = document.getElementById("myBlock");
+      myBlock.addEventListener("transitionend", function() {
+        myBlock.style.display = "none";
+      });
+    </script>
+}
+
+<div class="text-center" >
+    <h2 style="margin-bottom: 20px;" class="display-4">Обновить рецепт</h2>
+</div>
+
+<form asp-action="UpdateRecipe" asp-route-recipeId="@ViewBag.Recipe.Id" method="post" enctype="multipart/form-data">
+    <div class="form-group">
+        <label asp-for="Name">Название рецепта:</label>
+        <input asp-for="Name" class="form-control" value="@ViewBag.Recipe.Name"/>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Category">Категория:</label>
+        <select asp-for="Category" value="@ViewBag.Category">
+                @foreach (var item in ViewBag.Categories)
+                {
+                    if (item.ToString() == ViewBag.Category)
+                    {
+                        <option value="@item.ToString()" selected>@item.ToString()</option>
+                    }
+                    else
+                    {
+                        <option value="@item.ToString()">@item.ToString()</option>
+                    }
+                }
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Image">Фото блюда:</label>
+        <input type="file" asp-for="Image" accept="image/*" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Timing">Время приготовления:</label>
+        <input type="time" asp-for="Timing" value="@ViewBag.Recipe.Timing.ToString("HH:mm")"/>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="PortionAmount">Кол-во порций:</label>
+        <input type="number" asp-for="PortionAmount" value="@ViewBag.Recipe.PortionAmount" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Description">Описание:</label>
+        <textarea asp-for="Description" class="form-control" rows="4">@ViewBag.Recipe?.Description</textarea>
+    </div>
+
+    <div class="form-group">
+        <label>Ингредиенты</label>
+        <button type="button" id="addIng" class="btn btn-primary">Добавить ингредиент</button>
+        <div id="ingrContainer" style="margin-top: 10px;">
+            @if (Model.RecipeIngredients.Count != 0)
+            {
+                @for (var i = 0; i < Model.RecipeIngredients.Count; i++)
+                {
+                    <div class="ingr" style="margin-top: 10px;">
+                        <input type="text" class="form-control" asp-for="RecipeIngredients[i].Name" placeholder="Название ингредиента" />
+                        <input type="text" class="form-control" asp-for="RecipeIngredients[i].Amount" placeholder="Количество" />
+                        <button type="button" class="btn btn-danger removeIng" style="margin-top: 10px;">Удалить</button>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label>Пошаговые шаги приготовления</label>
+        <button type="button" id="addStep" class="btn btn-primary">Добавить шаг</button>
+        <div id="stepsContainer" style="margin-top: 10px;">
+            @if (Model.RecipeSteps.Count != 0)
+            {
+                @for (var i = 0; i < Model.RecipeSteps.Count; i++)
+                {
+                    <div class="step" style="margin-top: 10px;">
+                        <input type="file" asp-for="RecipeSteps[i].Photo" accept="image/*" />
+                        <input type="text" class="form-control" asp-for="RecipeSteps[i].Description" placeholder="Описание шага" />
+                        <button type="button" class="btn btn-danger removeStep" style="margin-top: 10px;">Удалить</button>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Обновить</button>
+</form>
+@section scripts {
+    <script>
+        var nextIngredientIndex = @Model.RecipeIngredients.Count;
+        var nextStepIndex = @Model.RecipeSteps.Count;
+
+        $('#addIng').click(function () {
+            var ingredient = $('.ingr:first').clone(true);
+            ingredient.find('input').val('');
+            ingredient.find('input').each(function () {
+                var name = $(this).attr('name').replace('[0]', '[' + nextIngredientIndex + ']');
+                $(this).attr('name', name);
+            });
+            $('#ingrContainer').append(ingredient);
+            nextIngredientIndex++;
+        });
+
+        $('#addStep').click(function () {
+            var step = $('.step:first').clone(true);
+            step.find('input[type=file]').val('');
+            step.find('input[type=text]').val('');
+            step.find('input').each(function () {
+                var name = $(this).attr('name').replace('[0]', '[' + nextStepIndex + ']');
+                $(this).attr('name', name);
+            });
+            $('#stepsContainer').append(step);
+            nextStepIndex++;
+        });
+
+        $('#ingrContainer').on('click', '.removeIng', function () {
+            $(this).closest('.ingr').remove();
+            reindexIngredients();
+        });
+
+        $('#stepsContainer').on('click', '.removeStep', function () {
+            $(this).closest('.step').remove();
+            reindexSteps();
+        });
+
+        function reindexIngredients() {
+            nextIngredientIndex = 0;
+            $('#ingrContainer .ingr').each(function () {
+                $(this).find('input').each(function () {
+                    var name = $(this).attr('name').replace(/\[\d+\]/g, '[' + nextIngredientIndex + ']');
+                    $(this).attr('name', name);
+                });
+                nextIngredientIndex++;
+            });
+        }
+
+        function reindexSteps() {
+            nextStepIndex = 0;
+            $('#stepsContainer .step').each(function () {
+                $(this).find('input').each(function () {
+                    var name = $(this).attr('name').replace(/\[\d+\]/g, '[' + nextStepIndex + ']');
+                    $(this).attr('name', name);
+                });
+                nextStepIndex++;
+            });
+        }
+
+    </script>
+}
+

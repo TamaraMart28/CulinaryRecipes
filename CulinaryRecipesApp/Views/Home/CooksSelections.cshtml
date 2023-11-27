@@ -1,7 +1,7 @@
 ﻿@model IndexViewModelForSelections
 
 @{
-    int itemsPerColumn = (int)Math.Ceiling(Model.Selections.Count() / 2.0); // Количество элементов в каждом столбце
+    int itemsPerColumn = (int)Math.Ceiling(Model.Selections.Count() / 2.0); 
 }
 <div class="container" style="margin-bottom: 20px;">
     <div class="row">
@@ -9,7 +9,7 @@
             @for (int i = 0; i < itemsPerColumn && i < Model.Selections.Count(); i++)
             {
                 var selection = Model.Selections.ElementAt(i);
-                <div class="card mb-3" style="max-width: 100%; background-color: #e8d3b3">
+                <div class="card mb-3" style="max-width: 100%; background-color: #ffffff">
                   <div class="row g-0">
                     <div class="card-body">
                         <h5 class="card-title">@selection.Name</h5>
@@ -23,7 +23,7 @@
             @for (int i = itemsPerColumn; i < Model.Selections.Count(); i++)
             {
                 var selection = Model.Selections.ElementAt(i);
-                <div class="card mb-3" style="max-width: 100%; background-color: #e8d3b3">
+                <div class="card mb-3" style="max-width: 100%; background-color: #ffffff">
                   <div class="row g-0">
                     <div class="card-body">
                         <h5 class="card-title">@selection.Name</h5>

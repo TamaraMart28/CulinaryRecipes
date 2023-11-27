@@ -1,110 +1,120 @@
 ﻿@model RecipeViewModel
 
-<h2>@Model.Name</h2>
+<div class="text-center">
+    <h2 style="margin-bottom: 30px;" class="display-4">@Model.Name</h2>
+</div>
 
-<p><strong>Категория:</strong> @Model.Category</p>
-<p href="/User?userId=@Model.UserId"><strong>Автор ссылка:</strong> @Model.Author</>
-<p><strong>Время приготовления:</strong> @Model.Timing.ToString("HH:mm")</p>
-<p><strong>Количество порций:</strong> @Model.PortionAmount</p>
-<p><strong>Описание:</strong></p>
-<p>@Model.Description</p>
+<div class="row" style="margin-bottom: 20px;">
+    <div class="col-md-4">
+        <div class="row" style="margin-bottom: 20px; font-size: 20px;"><strong>Категория: </strong><a asp-area="" asp-controller="Home" asp-action="Category" asp-route-cetegoryId="@ViewBag.CategoryId" style="color: black;">@Model.Category</a></div>
+        <div class="row" style="margin-bottom: 20px; font-size: 20px;"><strong>Автор: </strong><a asp-area="" asp-controller="Home" asp-action="Cook" asp-route-userId="@Model.UserId" style="color: black;">@Model.Author</a></div>
+        <div class="row" style="margin-bottom: 20px; font-size: 20px;"><strong>Время приготовления: </strong><a> @Model.Timing.ToString("HH:mm") </a></div>
+        <div class="row" style="margin-bottom: 20px; font-size: 20px;"><strong>Количество порций: </strong><a> @Model.PortionAmount</a></div>
+    </div>
+    <div class="col-md-8 text-md-right">
+        <img src="@(Model.ImagePath == "noimage" ? "/Files/recipe.PNG" : @Model.ImagePath)" width="80%" height="80%" />
+    </div>
+</div>
+<div class="row" style="margin-bottom: 20px;">
+    <h5 style="margin-bottom: 20px;">Ингредиенты:</h5>
+    <div class="col-md-6">
+        <table class="table table-bordered table-striped">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Название</th>
+                    <th>Количество</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var ingredient in Model.RecipeIngredients)
+                {
+                    <tr>
+                        <td>@ingredient.Name</td>
+                        <td>@ingredient.Amount</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="col-md-6">
+        <p><strong>Описание: </strong>@Model.Description</p>
+    </div>
+</div>
 
-@if (Model.ImagePath != null)
-{
-    <img src="@(string.IsNullOrEmpty(@Model.ImagePath) ? "~/Files/recipe.png" : @Model.ImagePath)" width="240" height="240" />
-}
-
-<h3>Ингредиенты:</h3>
-<table>
-    <thead>
-        <tr>
-            <th>Название</th>
-            <th>Количество</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var ingredient in Model.RecipeIngredients)
-        {
-            <tr>
-                <td>@ingredient.Name</td>
-                <td>@ingredient.Amount</td>
-            </tr>
-        }
-    </tbody>
-</table>
-
-<h3>Пошаговые шаги приготовления:</h3>
-<ol>
+<h5 style="margin-bottom: 20px;">Пошаговые шаги приготовления:</h5>
+<ol class="list-group" style="margin-bottom: 20px;">
     @foreach (var step in Model.RecipeSteps)
     {
-        <li>
-            @step.Description
-            <img src="@(string.IsNullOrEmpty(@step.PhotoPath) ? "~/Files/recipe.png" : @step.PhotoPath)" width="240" height="240" />
-        </li>
+        <div class="row" style="margin-bottom: 20px;">
+            <div class="col-md-6">
+                @step.Number) @step.Description
+            </div>
+            <div class="col-md-6 text-md-right">
+                <img src="@(step.PhotoPath == "noimage" ? "" : @step.PhotoPath)" class="img-fluid" alt="Step Photo" width="80%" height="80%" />
+            </div>
+            
+        </div>
     }
 </ol>
 
 @if(Session.User != null)
 {
-    <div style="margin-bottom: 20px;" class="accordion" id="accordionExample" style="background-color: #e8d3b3">
+    <div style="margin-bottom: 15px; width:30%" class="accordion" id="accordionExample">
       <div class="accordion-item">
-        <h2 class="accordion-header" id="headingOne" style="background-color: #e8d3b3">
+        <h2 class="accordion-header" id="headingOne">
           <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
             Добавить в подборку
           </button>
         </h2>
-        <div style="background-color: #e8d3b3" id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
-          <ul>
+        <div  id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+          <div class="list-group">
             @foreach (var selection in ViewBag.UsersSelection)
             {
-                <li>
-                    <a asp-area="" asp-controller="Home" asp-action="AddRecipeToSelection" asp-route-recipeId="@Model.Id" asp-route-selectionId="@selection.Id">
+                <div style="font-size: 15px; text-align: center">
+                    <a style="color: black;" asp-area="" asp-controller="Home" asp-action="AddRecipeToSelection" asp-route-recipeId="@Model.Id" asp-route-selectionId="@selection.Id">
                         @selection.Name
                     </a>
-                </li>
+                </div>
             }
-        </ul>
+        </div>
         </div>
       </div>
     </div>
     
-    
-    
-    
-    
-    
-    <form asp-action="AddCommentGrade" method="post">
+    <form asp-action="AddCommentGrade" method="post" style="margin-bottom: 20px;">
         <input type="hidden" name="recipeId" value="@Model.Id">
         <input type="hidden" name="userId" value="@Model.UserId">
-        <div class="form-group">
-            <label for="comment">Ваш комментарий:</label>
-            <textarea id="comment" name="comment" class="form-control" rows="4" required></textarea>
+        <div class="row">
+            <div class="form-group col-md-9">
+                <label for="comment">Ваш комментарий:</label>
+                <textarea id="comment" name="comment" class="form-control" rows="4" required></textarea>
+            </div>
+            <div class="form-group col-md-3">
+                <label for="grade">Оцените рецепт:</label>
+                <select id="grade" name="grade" class="form-control" required>
+                    <option value="5">5 (Отлично)</option>
+                    <option value="4">4 (Хорошо)</option>
+                    <option value="3">3 (Нормально)</option>
+                    <option value="2">2 (Плохо)</option>
+                    <option value="1">1 (Ужасно)</option>
+                </select>
+            </div>
         </div>
-        <div class="form-group">
-            <label for="grade">Оцените рецепт:</label>
-            <select id="grade" name="grade" class="form-control" required>
-                <option value="1">1 (Ужасно)</option>
-                <option value="2">2 (Плохо)</option>
-                <option value="3">3 (Нормально)</option>
-                <option value="4">4 (Хорошо)</option>
-                <option value="5">5 (Отлично)</option>
-            </select>
-        </div>
-        <button type="submit" class="btn btn-primary">Оставить комментарий и оценку</button>
+        
+        <button type="submit" class="btn btn-dark">Оставить комментарий и оценку</button>
     </form>
 }
 
-<p><strong>Комментарии к рецепту</strong></p>
+<h5 style="margin-bottom: 20px;">Комментарии к рецепту</h5>
 @if(Model.CommentGrades.Count != 0) 
 {
-    <ul>
+    <ul class="list-group">
         @foreach (var comment in Model.CommentGrades)
         {
-            <li>
-                <p href="/User?userId=@Model.UserId"><strong>Пользователь:</strong> @comment.User</p>
+            <li class="list-group-item">
+                <div class="row" style="margin-bottom: 20px; font-size: 20px;"><a asp-area="" asp-controller="Home" asp-action="Cook" asp-route-userId="@comment.UserId" style="color: black;">@comment.User</a></div>
                 <p><strong>Оценка:</strong> @comment.Grade</p>
-                <p><strong>Комментарий:</strong></p>
-                <p>@comment.Comment</p>
+                <p><strong>Комментарий:</strong> @comment.Comment</p>
             </li>
         }
     </ul>

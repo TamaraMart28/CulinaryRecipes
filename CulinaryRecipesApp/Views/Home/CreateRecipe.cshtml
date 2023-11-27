@@ -3,44 +3,48 @@
 @{
     ViewData["Title"] = "Создать рецепт"; 
 }
-@*<style>
-    .form-group {
-        position: relative;
-    }
+@if (TempData["Message"] != null)
+{
+    <div style="position: absolute; z-index: 2; width: 80%; left: 50%; transform: translate(-50%, -50%);" id="myBlock" class="fade-out-transition alert alert-danger">
+      @TempData["Message"]
+    </div>
 
-    .searchInput {
-        width: 100%;
-    }
+    <style>
+      .fade-out-transition {
+        opacity: 1;
+        transition: opacity 1s;
+      }
 
-    .wordList {
-        position: absolute;
-        z-index: 9999;
-        background: white;
-        max-height: 100px; /* Здесь установите высоту в пикселях, которую вы предпочитаете */
-        overflow-y: auto;
-        display: none;
-    }
+      .fade-out-transition.fade-out {
+        opacity: 0;
+      }
+    </style>
 
-    .wordList .list-group-item {
-        cursor: pointer;
-        padding: 5px;
-    }
+    <script>
+      setTimeout(function() {
+        const myBlock = document.getElementById("myBlock");
+        myBlock.classList.add("fade-out");
+      }, 3000);
 
-    .wordList .list-group-item:hover {
-        background-color: #e0e0e0; /* Цвет подсветки при наведении */
-    }
-</style>*@
+      const myBlock = document.getElementById("myBlock");
+      myBlock.addEventListener("transitionend", function() {
+        myBlock.style.display = "none";
+      });
+    </script>
+}
 
-<h2>Создать рецепт</h2>
+<div class="text-center" >
+    <h2 style="margin-bottom: 20px;" class="display-4">Создать рецепт</h2>
+</div>
 
 <form asp-action="CreateRecipe" method="post" enctype="multipart/form-data">
     <div class="form-group">
-        <label asp-for="Name">Название рецепта</label>
+        <label asp-for="Name">Название рецепта:</label>
         <input asp-for="Name" class="form-control" />
     </div>
 
     <div class="form-group">
-        <label asp-for="Category">Категория</label>
+        <label asp-for="Category">Категория:</label>
         <select asp-for="Category" value="@ViewBag.Category">
                 @foreach (var item in ViewBag.Categories)
                 {
@@ -57,34 +61,34 @@
     </div>
 
     <div class="form-group">
-        <label asp-for="Image">Фото блюда</label>
+        <label asp-for="Image">Фото блюда:</label>
         <input type="file" asp-for="Image" accept="image/*" />
     </div>
 
     <div class="form-group">
-        <label asp-for="Timing">Время приготовления</label>
+        <label asp-for="Timing">Время приготовления:</label>
         <input type="time" asp-for="Timing" />
     </div>
 
     <div class="form-group">
-        <label asp-for="PortionAmount">Кол-во порций</label>
+        <label asp-for="PortionAmount">Кол-во порций:</label>
         <input type="number" asp-for="PortionAmount" />
     </div>
 
     <div class="form-group">
-        <label asp-for="Description">Описание</label>
+        <label asp-for="Description">Описание:</label>
         <textarea asp-for="Description" class="form-control" rows="4"></textarea>
     </div>
 
     <div class="form-group">
         <label>Ингредиенты</label>
-        <button type="button" id="addIng" class="btn btn-primary">Добавить ингредиент</button>
-        <div id="ingrContainer">
+        <button type="button" id="addIng" class="btn btn-primary">Добавить ингредиент:</button>
+        <div id="ingrContainer" style="margin-top: 10px;">
             @if (Model.RecipeIngredients.Count != 0)
             {
                 @for (var i = 0; i < Model.RecipeIngredients.Count; i++)
                 {
-                    <div class="ingr">
+                    <div class="ingr" style="margin-top: 10px;">
                         <input type="text" class="form-control" asp-for="RecipeIngredients[i].Name" placeholder="Название ингредиента" />
                         @*<input type="text" class="form-control searchInput" asp-for="RecipeIngredients[i].Name" placeholder="Название ингредиента" onclick="showList(this, @i)">
 
@@ -96,7 +100,7 @@
                         </ul>*@
 
                         <input type="text" class="form-control" asp-for="RecipeIngredients[i].Amount" placeholder="Количество" />
-                        <button type="button" class="btn btn-danger removeIng">Удалить</button>
+                        <button type="button" class="btn btn-danger removeIng" style="margin-top: 10px;">Удалить</button>
                     </div>
                 }
             }
@@ -105,23 +109,23 @@
 
     <div class="form-group">
         <label>Пошаговые шаги приготовления</label>
-        <button type="button" id="addStep" class="btn btn-primary">Добавить шаг</button>
-        <div id="stepsContainer">
+        <button type="button" id="addStep" class="btn btn-primary">Добавить шаг:</button>
+        <div id="stepsContainer" style="margin-top: 10px;">
             @if (Model.RecipeSteps.Count != 0)
             {
                 @for (var i = 0; i < Model.RecipeSteps.Count; i++)
                 {
-                    <div class="step">
+                    <div class="step" style="margin-top: 10px;">
                         <input type="file" asp-for="RecipeSteps[i].Photo" accept="image/*" />
                         <input type="text" class="form-control" asp-for="RecipeSteps[i].Description" placeholder="Описание шага" />
-                        <button type="button" class="btn btn-danger removeStep">Удалить</button>
+                        <button type="button" class="btn btn-danger removeStep" style="margin-top: 10px;">Удалить</button>
                     </div>
                 }
             }
         </div>
     </div>
 
-    <button type="submit" class="btn btn-primary">Создать</button>
+    <button type="submit" class="btn btn-primary text-center">Создать</button>
 </form>
 @section scripts {
     <script>

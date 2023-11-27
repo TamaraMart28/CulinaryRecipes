@@ -2,14 +2,16 @@
 @{
     int selectionId = ViewBag.Selection.Id;
 }
-<h2>@ViewBag.Selection.Name</h2>
+<div class="text-center" >
+        <h2 style="margin-bottom: 20px;" class="display-4">@ViewBag.Selection.Name</h2>
+    </div>
 @if(ViewBag.Selection.UserId == Session.User.Id)
 {
     <label for="myCheckbox">Приватная подборка</label>
     <input type="checkbox" id="myCheckbox" name="myCheckbox" @(ViewBag.Selection.IsPrivate ? "checked" : "") />
 }
 
-<h2>Рецепты</h2>
+
 @{
     int itemsPerColumn = (int)Math.Ceiling(Model.Recipes.Count() / 2.0); // Количество элементов в каждом столбце
 }
@@ -19,12 +21,12 @@
             @for (int i = 0; i < itemsPerColumn && i < Model.Recipes.Count(); i++)
             {
                 var recipe = Model.Recipes.ElementAt(i);
-                <div class="card mb-3" style="max-width: 100%; background-color: #e8d3b3">
+                <div class="card mb-3" style="max-width: 100%; background-color: #ffffff">
                   <div class="row g-0">
-                    <div class="col-md-4">
-                      <img src="@recipe.ImagePath" class="img-fluid rounded-start" alt="...">
+                    <div class="col-md-6 d-flex align-items-center justify-content-center">
+                      <img src="@recipe.ImagePath" class="img-fluid">
                     </div>
-                    <div class="col-md-8">
+                    <div class="col-md-6">
                       <div class="card-body">
                         <h5 class="card-title">@recipe.Name</h5>
                         <p class="card-text">Время приготовления: @recipe.Timing.ToString("t")</p>
@@ -41,12 +43,12 @@
             @for (int i = itemsPerColumn; i < Model.Recipes.Count(); i++)
             {
                 var recipe = Model.Recipes.ElementAt(i);
-                <div class="card mb-3" style="max-width: 100%; background-color: #e8d3b3">
+                <div class="card mb-3" style="max-width: 100%; background-color: #ffffff">
                   <div class="row g-0">
-                    <div class="col-md-4">
-                      <img src="@recipe.ImagePath" class="img-fluid rounded-start" alt="...">
+                    <div class="col-md-6 d-flex align-items-center justify-content-center">
+                      <img src="@recipe.ImagePath" class="img-fluid">
                     </div>
-                    <div class="col-md-8">
+                    <div class="col-md-6">
                       <div class="card-body">
                         <h5 class="card-title">@recipe.Name</h5>
                         <p class="card-text">Время приготовления: @recipe.Timing.ToString("t")</p>

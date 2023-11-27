@@ -1,18 +1,15 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
-@using BusinessLogics.ViewModels
+﻿@using BusinessLogics.ViewModels
 @model List<CategoryVM> 
 
-<h2>Категории Рецептов</h2>
+<div class="text-center" >
+    <h2 style="margin-bottom: 20px;" class="display-4">Категории рецептов</h2>
+</div>
 
-<ul>
+<ul class="list-group">
     @foreach (var category in Model)
     {
-        <li>
-            <a asp-action="Category" asp-route-categoryId="@category.Id">
+        <li class="list-group-item" style="font-size: 20px; text-align: center">
+            <a asp-action="Category" asp-route-categoryId="@category.Id" style="color: black;">
                 @category.Description
             </a>
         </li>

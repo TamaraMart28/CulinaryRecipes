@@ -33,29 +33,36 @@
 @using BusinessLogics.ViewModels;
 @model UserVM
 
-<div class="col-md-5">
-     <img src="@(string.IsNullOrEmpty(@Model.AvatarPath) ? "~/Files/avatar.jpg" : @Model.AvatarPath)" width="240" height="240" />
-</div>
-<br />
 <div class="row">
-      <div class="col-4">@Model.Nickname</div>
-      <div class="col-4">@ViewBag.Followers</div>
-      @if(Session.User != null){
-        if (ViewBag.IsFolowing)
-        {
-            <a class="col-4 btn btn-danger" asp-route-userIdFollower="@Session.User.Id" asp-route-userIdFollowing="@Model.Id" asp-action="UnfollowUser">Отписаться</a>
-        }
-        else
-        {
-            <a class="col-4 btn btn-dark" asp-route-userIdFollower="@Session.User.Id" asp-route-userIdFollowing="@Model.Id" asp-action="FollowUser">Подписаться</a>
-        }
-    }
+    <div class="col-md-6">
+         <img src="@(Model.AvatarPath == "noimage" ? "/Files/avatar.jpg" : @Model.AvatarPath)" maxwidth="80%" height="80%" />
+    </div>
+    <div class="col-md-6">
+        <br />
+        <div>
+            <h5 style="margin-bottom: 20px;" class="display-4">@Model.Nickname</h5>
+        </div>
+        <div class="row text-center" style="margin-bottom: 20px;">
+            <div class="col-4">Подписчики: @ViewBag.Followers</div>
+            @if(Session.User != null){
+               if (ViewBag.IsFolowing)
+               {
+                   <a class="col-4 btn btn-danger" asp-route-userIdFollower="@Session.User.Id" asp-route-userIdFollowing="@Model.Id" asp-action="UnfollowUser">Отписаться</a>
+               }
+               else
+               {
+                   <a class="col-4 btn btn-dark" asp-route-userIdFollower="@Session.User.Id" asp-route-userIdFollowing="@Model.Id" asp-action="FollowUser">Подписаться</a>
+               }
+            }
+            
+        </div>
+        <div class="row text-center">
+            <a class="col-4 btn btn-outline-dark" asp-area="" asp-controller="Home" asp-action="CooksRecipes" asp-route-userId="@Model.Id">Рецепты от "@Model.Nickname"</a>
+            <a class="col-4 btn btn-outline-dark" style="margin-left: 20px;" asp-area="" asp-controller="Home" asp-action="CooksSelections" asp-route-userId="@Model.Id">Подборки от "@Model.Nickname"</a>
+        </div> 
+    </div>
 </div>
-<br />
-<div class="row">
-    <a class="col-4" asp-area="" asp-controller="Home" asp-action="CooksRecipes" asp-route-userId="@Model.Id">Рецепты @Model.Nickname</a>
-    <a class="col-4" asp-area="" asp-controller="Home" asp-action="CooksSelections" asp-route-userId="@Model.Id">Подборки @Model.Nickname</a>
-</div> 
+
 
 
 

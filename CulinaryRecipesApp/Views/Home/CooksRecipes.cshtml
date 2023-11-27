@@ -9,12 +9,12 @@
             @for (int i = 0; i < itemsPerColumn && i < Model.Recipes.Count(); i++)
             {
                 var recipe = Model.Recipes.ElementAt(i);
-                <div class="card mb-3" style="max-width: 100%; background-color: #e8d3b3">
+                <div class="card mb-3" style="max-width: 100%; background-color: #ffffff">
                   <div class="row g-0">
-                    <div class="col-md-4">
-                      <img src="@recipe.ImagePath" class="img-fluid rounded-start" alt="...">
+                    <div class="col-md-6 d-flex align-items-center justify-content-center">
+                      <img src="@(recipe.ImagePath == "noimage" ? "/Files/recipe.PNG" : @recipe.ImagePath)" class="img-fluid">
                     </div>
-                    <div class="col-md-8">
+                    <div class="col-md-6">
                       <div class="card-body">
                         <h5 class="card-title">@recipe.Name</h5>
                         <p class="card-text">Время приготовления: @recipe.Timing.ToString("t")</p>
@@ -30,12 +30,12 @@
             @for (int i = itemsPerColumn; i < Model.Recipes.Count(); i++)
             {
                 var recipe = Model.Recipes.ElementAt(i);
-                <div class="card mb-3" style="max-width: 100%; background-color: #e8d3b3">
+                <div class="card mb-3" style="max-width: 100%; background-color: #ffffff">
                   <div class="row g-0">
-                    <div class="col-md-4">
-                      <img src="@recipe.ImagePath" class="img-fluid rounded-start" alt="...">
+                    <div class="col-md-6 d-flex align-items-center justify-content-center">
+                      <img src="@(recipe.ImagePath == "noimage" ? "/Files/recipe.PNG" : @recipe.ImagePath)" class="img-fluid">
                     </div>
-                    <div class="col-md-8">
+                    <div class="col-md-6">
                       <div class="card-body">
                         <h5 class="card-title">@recipe.Name</h5>
                         <p class="card-text">Время приготовления: @recipe.Timing.ToString("t")</p>

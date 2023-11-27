@@ -43,7 +43,7 @@ namespace CulinaryRecipesApp.Controllers
         {
             var RecipeList = APIClient.GetRequest<List<RecipeVM>>($"api/main/GetRecipeList");
             RecipeList.Reverse();
-            RecipeList = RecipeList.GetRange(0, 2);
+            RecipeList = RecipeList.GetRange(0, 5);
             ViewBag.RecipeList = RecipeList;
             return View();
         }
@@ -281,95 +281,268 @@ namespace CulinaryRecipesApp.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateRecipe(RecipeBindingModel model)
         {
-            //Работа с аватаром
-            string path;
-            string imageName;
-            if (model.Image == null)
+            try
             {
-                imageName = "noimage";
-                path = "noimage";
-            }
-            else
-            {
-                path = "/Files/" + model.Image.FileName;
-                imageName = model.Image.FileName;
-                using (var fileStream = new FileStream(_environment.WebRootPath + path, FileMode.Create))
+                //Работа с аватаром
+                string path;
+                string imageName;
+                if (model.Image == null)
                 {
-                    await model.Image.CopyToAsync(fileStream);
-                }
-            }
-            //Работа с категорией
-            var category = APIClient.GetRequest<CategoryVM>($"api/main/getcategory?description={model.Category}");
-
-
-            APIClient.PostRequest("api/main/createorupdaterecipe", new RecipeBM
-            {
-                Name = model.Name,
-                Description = model.Description,
-                ImageName = imageName,
-                ImagePath = path,
-                Timing = model.Timing,
-                PortionAmount = model.PortionAmount,
-                CategoryId = category.Id,
-                UserId = Session.User.Id,
-                CommentGrades = new Dictionary<int, string>(),
-                StepCookings = new Dictionary<int, string>(),
-                RecipeIngredients = new Dictionary<int, string>()
-            });
-            var recipe = APIClient.GetRequest<RecipeVM>($"api/main/getrecipebyname?name={model.Name}&userId={Session.User.Id}");
-
-            foreach (var ing in model.RecipeIngredients)
-            {
-                var ingredient = APIClient.GetRequest<IngredientVM>($"api/main/getingredient?name={ing.Name}");
-                if(ingredient == null)
-                {
-                    APIClient.PostRequest("api/main/createorupdateingredient", new IngredientBM
-                    {
-                        Name = ing.Name,
-                        RecipeIngredients = new Dictionary<int, string>()
-                    });
-                    ingredient = APIClient.GetRequest<IngredientVM>($"api/main/getingredient?name={ing.Name}");
-                }
-                APIClient.PostRequest("api/main/createorupdaterecipeingredient", new RecipeIngredientBM
-                {
-                    RecipeId = recipe.Id,
-                    IngredientId = ingredient.Id,
-                    Amount = ing.Amount
-                });
-            }
-
-            int i = 1;
-            foreach (var step in model.RecipeSteps)
-            {
-                string pathSC;
-                string imageNameSC;
-                if (step.Photo == null)
-                {
-                    imageNameSC = "noimage";
-                    pathSC = "noimage";
+                    imageName = "noimage";
+                    path = "noimage";
                 }
                 else
                 {
-                    pathSC = "/Files/" + step.Photo.FileName;
-                    imageNameSC = step.Photo.FileName;
-                    using (var fileStream = new FileStream(_environment.WebRootPath + pathSC, FileMode.Create))
+                    path = "/Files/" + model.Image.FileName;
+                    imageName = model.Image.FileName;
+                    using (var fileStream = new FileStream(_environment.WebRootPath + path, FileMode.Create))
                     {
-                        await step.Photo.CopyToAsync(fileStream);
+                        await model.Image.CopyToAsync(fileStream);
                     }
                 }
-                APIClient.PostRequest("api/main/createorupdatestepcooking", new StepCookingBM
+                //Работа с категорией
+                var category = APIClient.GetRequest<CategoryVM>($"api/main/getcategory?description={model.Category}");
+
+
+                APIClient.PostRequest("api/main/createorupdaterecipe", new RecipeBM
                 {
-                    NumberOrder = i,
-                    Description = step.Description,
-                    ImageName = imageNameSC,
-                    ImagePath = pathSC,
-                    RecipeId = recipe.Id
+                    Name = model.Name,
+                    Description = model.Description,
+                    ImageName = imageName,
+                    ImagePath = path,
+                    Timing = model.Timing,
+                    PortionAmount = model.PortionAmount,
+                    CategoryId = category.Id,
+                    UserId = Session.User.Id,
+                    CommentGrades = new Dictionary<int, string>(),
+                    StepCookings = new Dictionary<int, string>(),
+                    RecipeIngredients = new Dictionary<int, string>()
+                });
+                var recipe = APIClient.GetRequest<RecipeVM>($"api/main/getrecipebyname?name={model.Name}&userId={Session.User.Id}");
+
+                foreach (var ing in model.RecipeIngredients)
+                {
+                    var ingredient = APIClient.GetRequest<IngredientVM>($"api/main/getingredient?name={ing.Name}");
+                    if (ingredient == null)
+                    {
+                        APIClient.PostRequest("api/main/createorupdateingredient", new IngredientBM
+                        {
+                            Name = ing.Name,
+                            RecipeIngredients = new Dictionary<int, string>()
+                        });
+                        ingredient = APIClient.GetRequest<IngredientVM>($"api/main/getingredient?name={ing.Name}");
+                    }
+                    APIClient.PostRequest("api/main/createorupdaterecipeingredient", new RecipeIngredientBM
+                    {
+                        RecipeId = recipe.Id,
+                        IngredientId = ingredient.Id,
+                        Amount = ing.Amount
+                    });
+                }
+
+                int i = 1;
+                foreach (var step in model.RecipeSteps)
+                {
+                    string pathSC;
+                    string imageNameSC;
+                    if (step.Photo == null)
+                    {
+                        imageNameSC = "noimage";
+                        pathSC = "noimage";
+                    }
+                    else
+                    {
+                        pathSC = "/Files/" + step.Photo.FileName;
+                        imageNameSC = step.Photo.FileName;
+                        using (var fileStream = new FileStream(_environment.WebRootPath + pathSC, FileMode.Create))
+                        {
+                            await step.Photo.CopyToAsync(fileStream);
+                        }
+                    }
+                    APIClient.PostRequest("api/main/createorupdatestepcooking", new StepCookingBM
+                    {
+                        NumberOrder = i,
+                        Description = step.Description,
+                        ImageName = imageNameSC,
+                        ImagePath = pathSC,
+                        RecipeId = recipe.Id
+                    });
+
+                    i++;
+                }
+
+                return Redirect("UsersRecipes?userId=" + Session.User.Id);
+            }
+            catch (Exception ex)
+            {
+                TempData["Message"] = ex.Message;
+                return Redirect("Privacy");
+            }
+        }
+
+        //Изменение рецепта
+        [HttpGet]
+        public IActionResult UpdateRecipe(int recipeId)
+        {
+            
+            try
+            {
+                var recipe = APIClient.GetRequest<RecipeVM>($"api/main/getrecipe?recipeId={recipeId}");
+                ViewBag.Recipe = recipe;
+
+                var riList = APIClient.GetRequest<List<RecipeIngredientVM>>($"api/main/GetRecipeIngredientByRecipeList?recipeId={recipeId}");
+                var RIList = new List<RecipeIngredient>();
+                foreach (var item in riList)
+                {
+                    var ingredient = APIClient.GetRequest<IngredientVM>($"api/main/GetIngredientById?ingridientId={item.IngredientId}");
+                    RIList.Add(new RecipeIngredient { Name = ingredient.Name, Amount = item.Amount });
+                }
+                var rsList = APIClient.GetRequest<List<StepCookingVM>>($"api/main/GetStepCookingByRecipeList?recipeId={recipeId}");
+                var RSList = new List<RecipeStep>();
+                foreach (var item in rsList)
+                {
+                    RSList.Add(new RecipeStep { Description = item.Description });
+                }
+
+                var model = new RecipeBindingModel
+                {
+                    RecipeIngredients = RIList,
+                    RecipeSteps = RSList
+                };
+
+                var CategoriesVM = APIClient.GetRequest<List<CategoryVM>>($"api/main/getcategorylist");
+                var Categories = new List<string>();
+                foreach (var item in CategoriesVM)
+                {
+                    Categories.Add(item.Description);
+                }
+                ViewBag.Categories = Categories;
+
+                var category = APIClient.GetRequest<CategoryVM>($"api/main/GetCategoryById?categoryId={recipe.CategoryId}");
+                ViewBag.Category = category.Description;
+
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                TempData["Message"] = ex.Message;
+                return Redirect("Privacy");
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateRecipe(int recipeId, RecipeBindingModel model)
+        {
+            try
+            {
+                //Работа с аватаром
+                string path;
+                string imageName;
+                if (model.Image == null)
+                {
+                    imageName = "noimage";
+                    path = "noimage";
+                }
+                else
+                {
+                    path = "/Files/" + model.Image.FileName;
+                    imageName = model.Image.FileName;
+                    using (var fileStream = new FileStream(_environment.WebRootPath + path, FileMode.Create))
+                    {
+                        await model.Image.CopyToAsync(fileStream);
+                    }
+                }
+                //Работа с категорией
+                var category = APIClient.GetRequest<CategoryVM>($"api/main/getcategory?description={model.Category}");
+
+                APIClient.PostRequest("api/main/createorupdaterecipe", new RecipeBM
+                {
+                    Id = recipeId,
+                    Name = model.Name,
+                    Description = model.Description,
+                    ImageName = imageName,
+                    ImagePath = path,
+                    Timing = model.Timing,
+                    PortionAmount = model.PortionAmount,
+                    CategoryId = category.Id,
+                    UserId = Session.User.Id,
+                    CommentGrades = new Dictionary<int, string>(),
+                    StepCookings = new Dictionary<int, string>(),
+                    RecipeIngredients = new Dictionary<int, string>()
                 });
 
-                i++;
-            }
+                //Удаление старых рецептов и шагов приготовления
+                var IngrList = APIClient.GetRequest<List<RecipeIngredientVM>>($"api/main/GetRecipeIngredientByRecipeList?recipeId={recipeId}");
+                foreach (var item in IngrList)
+                {
+                    APIClient.PostRequest("api/main/DeleteRecipeIngredient", item);
+                }
+                var StepsList = APIClient.GetRequest<List<StepCookingVM>>($"api/main/GetStepCookingByRecipeList?recipeId={recipeId}");
+                foreach (var item in StepsList)
+                {
+                    APIClient.PostRequest("api/main/DeleteStepCooking", item);
+                }
 
-            return Redirect("UsersRecipes?userId=" + Session.User.Id);
+
+                foreach (var ing in model.RecipeIngredients)
+                {
+                    var ingredient = APIClient.GetRequest<IngredientVM>($"api/main/getingredient?name={ing.Name}");
+                    if (ingredient == null)
+                    {
+                        APIClient.PostRequest("api/main/createorupdateingredient", new IngredientBM
+                        {
+                            Name = ing.Name,
+                            RecipeIngredients = new Dictionary<int, string>()
+                        });
+                        ingredient = APIClient.GetRequest<IngredientVM>($"api/main/getingredient?name={ing.Name}");
+                    }
+                    APIClient.PostRequest("api/main/createorupdaterecipeingredient", new RecipeIngredientBM
+                    {
+                        RecipeId = recipeId,
+                        IngredientId = ingredient.Id,
+                        Amount = ing.Amount
+                    });
+                }
+
+                int i = 1;
+                foreach (var step in model.RecipeSteps)
+                {
+                    string pathSC;
+                    string imageNameSC;
+                    if (step.Photo == null)
+                    {
+                        imageNameSC = "noimage";
+                        pathSC = "noimage";
+                    }
+                    else
+                    {
+                        pathSC = "/Files/" + step.Photo.FileName;
+                        imageNameSC = step.Photo.FileName;
+                        using (var fileStream = new FileStream(_environment.WebRootPath + pathSC, FileMode.Create))
+                        {
+                            await step.Photo.CopyToAsync(fileStream);
+                        }
+                    }
+
+                    APIClient.PostRequest("api/main/createorupdatestepcooking", new StepCookingBM
+                    {
+                        NumberOrder = i,
+                        Description = step.Description,
+                        ImageName = imageNameSC,
+                        ImagePath = pathSC,
+                        RecipeId = recipeId
+                    });
+
+                    i++;
+                }
+
+                return Redirect("UsersRecipes?userId=" + Session.User.Id);
+            }
+            catch (Exception ex)
+            {
+                TempData["Message"] = ex.Message;
+                return Redirect("Privacy");
+            }
         }
 
         //Страница рецепта
@@ -418,10 +591,12 @@ namespace CulinaryRecipesApp.Controllers
             model.RecipeSteps = RecipeSteps;
             model.CommentGrades = CommentGrades;
 
-            ViewBag.UsersSelection = APIClient.GetRequest<List<SelectionVM>>($"api/main/GetUsersSelectionList?userId={Session.User.Id}"); 
+            ViewBag.CategoryId = category.Id;
 
-
-
+            if (Session.User != null)
+            {
+                ViewBag.UsersSelection = APIClient.GetRequest<List<SelectionVM>>($"api/main/GetUsersSelectionList?userId={Session.User.Id}");
+            }
             return View(model);
         }
 
@@ -658,7 +833,9 @@ namespace CulinaryRecipesApp.Controllers
                 if (sub != null) { ViewBag.IsFolowing = true; }
                 else { ViewBag.IsFolowing = false; }
             }
-            
+            var list = APIClient.GetRequest<List<SubscriptionVM>>($"api/main/GetSubscriptionByFollowing?userIdFollowing={userId}");
+            ViewBag.Followers = list.Count;
+
             return View(user);
         }
 

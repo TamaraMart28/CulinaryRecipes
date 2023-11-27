@@ -1,6 +1,6 @@
 ﻿@model IndexViewModelForRecipes
 
-<a class="col-4" asp-area="" asp-controller="Home" asp-action="CreateRecipe" class="btn btn-outline-dark">Добавить рецепт</a>
+<a class="col-4 btn btn-outline-dark" style="margin-bottom: 20px;" asp-area="" asp-controller="Home" asp-action="CreateRecipe" class="btn btn-outline-dark">Добавить рецепт</a>
 
 @{
     int itemsPerColumn = (int)Math.Ceiling(Model.Recipes.Count() / 2.0); // Количество элементов в каждом столбце
@@ -11,17 +11,18 @@
             @for (int i = 0; i < itemsPerColumn && i < Model.Recipes.Count(); i++)
             {
                 var recipe = Model.Recipes.ElementAt(i);
-                <div class="card mb-3" style="max-width: 100%; background-color: #e8d3b3">
+                <div class="card mb-3" style="max-width: 100%; background-color: #ffffff">
                   <div class="row g-0">
-                    <div class="col-md-4">
-                      <img src="@recipe.ImagePath" class="img-fluid rounded-start" alt="...">
+                    <div class="col-md-6 d-flex align-items-center justify-content-center">
+                      <img src="@recipe.ImagePath" class="img-fluid">
                     </div>
-                    <div class="col-md-8">
+                    <div class="col-md-6">
                       <div class="card-body">
                         <h5 class="card-title">@recipe.Name</h5>
                         <p class="card-text">Время приготовления: @recipe.Timing.ToString("t")</p>
                         <p class="card-text"><small class="text-muted">Кол-во порций: @recipe.PortionAmount</small></p>
-                        <a class="btn btn-dark" asp-area="" asp-controller="Home" asp-action="Recipe" asp-route-recipeId="@recipe.Id">Подробнее</a>
+                        <a class="btn btn-dark" asp-area="" asp-controller="Home" asp-action="Recipe" asp-route-recipeId="@recipe.Id" style="margin-bottom: 20px;">Подробнее</a>
+                        <a class="btn btn-secondary" asp-area="" asp-controller="Home" asp-action="UpdateRecipe" asp-route-recipeId="@recipe.Id">Изменить</a>
                         <a class="btn btn-secondary" asp-area="" asp-controller="Home" asp-action="DeleteRecipe" asp-route-recipeId="@recipe.Id">Удалить</a>
                       </div>
                     </div>
@@ -33,17 +34,18 @@
             @for (int i = itemsPerColumn; i < Model.Recipes.Count(); i++)
             {
                 var recipe = Model.Recipes.ElementAt(i);
-                <div class="card mb-3" style="max-width: 100%; background-color: #e8d3b3">
+                <div class="card mb-3" style="max-width: 100%; background-color: #ffffff">
                   <div class="row g-0">
-                    <div class="col-md-4">
-                      <img src="@recipe.ImagePath" class="img-fluid rounded-start" alt="...">
+                    <div class="col-md-6 d-flex align-items-center justify-content-center">
+                      <img src="@recipe.ImagePath" class="img-fluid">
                     </div>
-                    <div class="col-md-8">
+                    <div class="col-md-6">
                       <div class="card-body">
                         <h5 class="card-title">@recipe.Name</h5>
                         <p class="card-text">Время приготовления: @recipe.Timing.ToString("t")</p>
                         <p class="card-text"><small class="text-muted">Кол-во порций: @recipe.PortionAmount</small></p>
-                        <a class="btn btn-dark" asp-area="" asp-controller="Home" asp-action="Recipe" asp-route-recipeId="@recipe.Id">Подробнее</a>
+                        <a class="btn btn-dark" asp-area="" asp-controller="Home" asp-action="Recipe" asp-route-recipeId="@recipe.Id" style="margin-bottom: 20px;">Подробнее</a>
+                        <a class="btn btn-secondary" asp-area="" asp-controller="Home" asp-action="UpdateRecipe" asp-route-recipeId="@recipe.Id">Изменить</a>
                         <a class="btn btn-secondary" asp-area="" asp-controller="Home" asp-action="DeleteRecipe" asp-route-recipeId="@recipe.Id">Удалить</a>
                       </div>
                     </div>

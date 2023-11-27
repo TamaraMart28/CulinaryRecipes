@@ -188,6 +188,10 @@ namespace RestApi.Controllers
         [HttpGet]
         public List<StepCookingVM> GetStepCookingList() => _scLogic.Read(null)?.ToList();
 
+        //Шаг по названию
+        [HttpGet]
+        public StepCookingVM GetStepCookingByName(int scId) => _scLogic.Read(new StepCookingBM { Id = scId })?[0];
+
         //Список по рецепту
         [HttpGet]
         public List<StepCookingVM> GetStepCookingByRecipeList(int recipeId) => _scLogic.Read(new StepCookingBM { RecipeId = recipeId });

@@ -41,7 +41,8 @@ namespace BusinessLogics.BusinessLogics
             });
             if (element != null && element.Id != model.Id)
             {
-                throw new Exception("Уже есть такая запись");
+                //throw new Exception("Уже есть такая запись");
+                return;
             }
             if (model.Id.HasValue)
             {

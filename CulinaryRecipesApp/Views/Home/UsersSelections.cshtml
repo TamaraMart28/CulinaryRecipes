@@ -1,14 +1,25 @@
 ﻿@model IndexViewModelForSelections
 
-<button id="openPopupButton">Добавить подборку</button>
+<button class="btn btn-outline-dark" id="openPopupButton" style="margin-bottom: 20px;">Добавить подборку</button>
 
 <!-- Всплывающая форма (изначально скрыта) -->
-<div id="popupForm" style="display: none;">
-    <label>Название:</label>
-    <input type="text" id="name">
-    <label>Приватность:</label>
-    <input type="checkbox" id="isPrivate">
-    <button id="submitButton">Отправить</button>
+<div id="popupForm" style="display: none; margin-top: 20px; margin-bottom: 20px;">
+    <div class="row">
+        <div class="col-md-4">
+            <label>Название:</label>
+            <input type="text" id="name">
+        </div>
+        <div class="col-md-4">
+            <label>Приватность:</label>
+            <input type="checkbox" id="isPrivate">
+        </div>
+        <div class="col-md-4">
+            <button class="btn btn-outline-dark" id="submitButton">Отправить</button>
+        </div>
+    </div>
+    
+    
+    
 </div>
 
 @{
@@ -20,7 +31,7 @@
             @for (int i = 0; i < itemsPerColumn && i < Model.Selections.Count(); i++)
             {
                 var selection = Model.Selections.ElementAt(i);
-                <div class="card mb-3" style="max-width: 100%; background-color: #e8d3b3">
+                <div class="card mb-3" style="max-width: 100%; background-color: #ffffff">
                   <div class="row g-0">
                     <div class="card-body">
                         <h5 class="card-title">@selection.Name</h5>
@@ -36,7 +47,7 @@
             @for (int i = itemsPerColumn; i < Model.Selections.Count(); i++)
             {
                 var selection = Model.Selections.ElementAt(i);
-                <div class="card mb-3" style="max-width: 100%; background-color: #e8d3b3">
+                <div class="card mb-3" style="max-width: 100%; background-color: #ffffff">
                   <div class="row g-0">
                     <div class="card-body">
                         <h5 class="card-title">@selection.Name</h5>
