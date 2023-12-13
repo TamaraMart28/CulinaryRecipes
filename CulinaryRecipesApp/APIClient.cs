@@ -9,6 +9,7 @@ namespace CulinaryRecipesApp
     public static class APIClient
     {
         private static readonly HttpClient client = new HttpClient();
+
         public static void Connect(IConfiguration configuration)
         {
             client.BaseAddress = new Uri(configuration["IPAddress"]);

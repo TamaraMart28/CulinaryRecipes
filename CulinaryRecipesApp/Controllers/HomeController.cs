@@ -606,7 +606,7 @@ namespace CulinaryRecipesApp.Controllers
             APIClient.PostRequest("api/main/createorupdatecommentgrade", new CommentGradeBM
             {
                 RecipeId = recipeId,
-                UserId = userId,
+                UserId = Session.User.Id,
                 Comment = comment,
                 Grade = grade
             });
@@ -802,7 +802,7 @@ namespace CulinaryRecipesApp.Controllers
             var date = new DateTime();
             if (!(timing.TimeOfDay == date.TimeOfDay))
             {
-                selectedRecipes = selectedRecipes.Where(p => timing.TimeOfDay <= p.Timing.TimeOfDay);
+                selectedRecipes = selectedRecipes.Where(p => timing.TimeOfDay >= p.Timing.TimeOfDay);
             }
 
             selectedRecipes = selectedRecipes.Reverse();
